@@ -64,3 +64,14 @@ create table ads_images
 alter table ads
     add constraint image_list_id_fkey foreign key(image_list_id)
         REFERENCES ads_images(id);
+
+-- changeset maxvagan:3
+create table comment
+(
+    id BIGSERIAL NOT NULL,
+    user_id bigint REFERENCES users(user_id),
+    ads_id bigint REFERENCES ads(id),
+    comment text,
+    create_date timestamp without time zone,
+    CONSTRAINT comment_id_pkey PRIMARY KEY (id)
+);

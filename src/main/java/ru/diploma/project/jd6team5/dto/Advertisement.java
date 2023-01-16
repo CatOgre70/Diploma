@@ -4,6 +4,8 @@ import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Entity(name = "ads")
 @Getter
 @Setter
@@ -22,4 +24,31 @@ public class Advertisement {
     private AdsStatus status = AdsStatus.ACTIVE;
     @Column(name = "image_list_id")
     private Long imageListID;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Advertisement)) return false;
+        Advertisement that = (Advertisement) o;
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getUserID(), that.getUserID()) && Objects.equals(getLabel(), that.getLabel()) && Objects.equals(getDescription(), that.getDescription()) && Objects.equals(getPrice(), that.getPrice()) && getCurrency() == that.getCurrency() && getStatus() == that.getStatus() && Objects.equals(getImageListID(), that.getImageListID());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getUserID(), getLabel(), getStatus(), getImageListID());
+    }
+
+    @Override
+    public String toString() {
+        return "Advertisement{" +
+                "id=" + id +
+                ", userID=" + userID +
+                ", label='" + label + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", currency=" + currency +
+                ", status=" + status +
+                ", imageListID=" + imageListID +
+                '}';
+    }
 }
