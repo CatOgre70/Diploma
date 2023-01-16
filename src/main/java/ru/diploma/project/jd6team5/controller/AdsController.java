@@ -19,6 +19,8 @@ import ru.diploma.project.jd6team5.model.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.lang.reflect.Array;
+import liquibase.pro.packaged.A;
 
 @RestController
 @RequestMapping(path = "/ads")
@@ -251,5 +253,37 @@ public class AdsController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Ads> updateAds(@PathVariable Long id) {
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{ads_id}/comment/{comment_id}")
+    public ResponseEntity<Comment> getComment(@PathVariable Long ads_id, @PathVariable Long comment_id) {
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{ads_id}/comment/{comment_id}")
+    public ResponseEntity<Comment> deleteComment(@PathVariable Long ads_id, @PathVariable Long comment_id) {
+        return ResponseEntity.ok().build();
+    }
+    /*    @Operation(
+                summary = "Изменение коммента",
+                operationId = "patchComment",
+                responses =
+
+                        Дописать, как будет понятно, как этот патч сработает. Пока что как-то туманно.
+        )*/
+
+    @PatchMapping("/{ads_id}/comment/{comment_id}")
+    public ResponseEntity<Comment> updateComment(@PathVariable Long ads_id, @PathVariable Long comment_id) {
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/me") //?????????????????????????????? Ничего не понял, что это. Надо посмотреть.
+    public ResponseEntity<List<Ads>> getAdsMe() {
+        return ResponseEntity.ok().build();
     }
 }
