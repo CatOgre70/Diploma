@@ -1,6 +1,6 @@
 package ru.diploma.project.jd6team5.dto;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,14 +11,15 @@ public class RegisterReq {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long user_id;
-    private String username;
-    private String password;
+    @Column(name = "user_id")
+    private Long userID = 1L;
+    private String username = "user@gmail.com";
+    private String password = "password";
     @Column(name = "first_name")
-    private String firstName;
+    private String firstName = "Имя пользователь";
     @Column(name = "last_name")
-    private String lastName;
-    private String phone;
+    private String lastName = "Отчество пользователя";
+    private String phone = "74951234567";
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private UserRole role = UserRole.USER;
 }
