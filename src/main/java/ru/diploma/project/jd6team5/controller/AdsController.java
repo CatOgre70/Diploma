@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
@@ -14,13 +13,14 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.Advertisement;
 import ru.diploma.project.jd6team5.dto.Comment;
 import ru.diploma.project.jd6team5.dto.User;
-import ru.diploma.project.jd6team5.model.*;
+import ru.diploma.project.jd6team5.model.CreateAds;
+import ru.diploma.project.jd6team5.model.FullAds;
+import ru.diploma.project.jd6team5.model.ResponseWrapperAds;
+import ru.diploma.project.jd6team5.model.ResponseWrapperComment;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.lang.reflect.Array;
-import liquibase.pro.packaged.A;
 
 @RestController
 @RequestMapping(path = "/ads")
@@ -256,7 +256,7 @@ public class AdsController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Ads> updateAds(@PathVariable Long id) {
+    public ResponseEntity<Advertisement> updateAds(@PathVariable Long id) {
         return ResponseEntity.ok().build();
     }
 
@@ -283,7 +283,7 @@ public class AdsController {
     }
 
     @GetMapping("/me") //?????????????????????????????? Ничего не понял, что это. Надо посмотреть.
-    public ResponseEntity<List<Ads>> getAdsMe() {
+    public ResponseEntity<List<Advertisement>> getAdsMe() {
         return ResponseEntity.ok().build();
     }
 }
