@@ -20,3 +20,47 @@ create table register_req
     role varchar(255),
     CONSTRAINT register_id_pkey PRIMARY KEY (id)
 );
+
+-- changeset maxvagan:2
+create table users
+(
+    user_id bigint NOT NULL,
+    email varchar(255),
+    first_name varchar(255),
+    last_name varchar(255),
+    phone varchar(255),
+    role varchar(255),
+    avatar_path varchar(255),
+    reg_date timestamp without time zone,
+    CONSTRAINT user_id_pkey PRIMARY KEY (user_id)
+);
+
+alter table register_req add column email varchar(255);
+alter table register_req
+    add constraint user_id_fkey foreign key(user_id)
+        REFERENCES users(user_id);
+
+create table ads
+(
+    id BIGSERIAL NOT NULL,
+    user_id bigint REFERENCES users(user_id),
+    label varchar(255),
+    description text,
+    price REAL,
+    currency varchar(3),
+    status varchar(255),
+    image_list_id bigint,
+    CONSTRAINT ads_id_pkey PRIMARY KEY (id)
+);
+
+create table ads_images
+(
+    id BIGSERIAL NOT NULL,
+    image_id bigint NOT NULL,
+    image_path varchar(255),
+    CONSTRAINT ads_images_id_pkey PRIMARY KEY (id)
+);
+
+alter table ads
+    add constraint image_list_id_fkey foreign key(image_list_id)
+        REFERENCES ads_images(id);
