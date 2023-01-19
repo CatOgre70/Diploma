@@ -20,7 +20,7 @@ import ru.diploma.project.jd6team5.service.AuthService;
 import static ru.diploma.project.jd6team5.dto.UserRole.USER;
 
 @RestController
-@CrossOrigin(value = "http://localhost:8624")
+@CrossOrigin(value = "http://localhost:3000")
 public class AuthController {
     private final AuthService authService;
 

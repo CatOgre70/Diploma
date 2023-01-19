@@ -18,7 +18,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(path = "/users")
-@CrossOrigin(value = "http://localhost:8624")
+@CrossOrigin(value = "http://localhost:3000")
 public class UsersController {
 
     private final User DEFAULT_USER_ENTITY = new User();
@@ -168,7 +168,7 @@ public class UsersController {
     )
     @PatchMapping(path = "{userID}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateUserImage(@Parameter(description = "ИД номер Пользователя") @PathVariable Long userID,
-                                                @Parameter(description = "Путь к файлу") @RequestBody MultipartFile inpPicture) throws IOException {
+                                                @Parameter(description = "Путь к файлу") @RequestPart MultipartFile inpPicture) throws IOException {
         if (inpPicture.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().body("File great than 10 Mb!");
         }
