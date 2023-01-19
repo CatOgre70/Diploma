@@ -9,7 +9,7 @@ info:
   title: Api Documentation
   version: '1.0'
 servers:
-  - url: http://localhost:8624
+  - url: http://localhost:8080
     description: Generated server url
 paths:
   /users/set_password:
