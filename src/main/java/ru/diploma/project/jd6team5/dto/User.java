@@ -31,9 +31,11 @@ public class User{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return Objects.equals(getUserID(), user.getUserID()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getFirstName(), user.getFirstName()) && Objects.equals(getLastName(), user.getLastName()) && Objects.equals(getPhone(), user.getPhone()) && getRole() == user.getRole();
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getUserID(), user.getUserID()) && Objects.equals(getEmail(), user.getEmail())
+                && Objects.equals(getFirstName(), user.getFirstName())
+                && Objects.equals(getLastName(), user.getLastName())
+                && Objects.equals(getPhone(), user.getPhone()) && getRole() == user.getRole();
     }
 
     @Override
