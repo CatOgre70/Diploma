@@ -15,12 +15,19 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "user_id")
-    private Long userID = 1L;
+    private Long userID;
     @Column(name = "ads_id")
-    private Long adsID = 1L;
-    private String comment = "Просто мой комментарий к Объявлению";
+    private Long adsID;
+    private String comment;
     @Column(name = "create_date")
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
+
+    public Comment() {
+        this.userID = 1L;
+        this.adsID = 1L;
+        this.comment = "Просто мой комментарий к Объявлению";
+        this.createDate = LocalDateTime.now();
+    }
 
     public Comment(Long userID, Long adsID, String comment, LocalDateTime createDate) {
         this.userID = userID;
