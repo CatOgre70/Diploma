@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.User;
 import ru.diploma.project.jd6team5.model.NewPassword;
+import ru.diploma.project.jd6team5.service.UserService;
 
 import java.io.IOException;
 
@@ -22,7 +23,11 @@ import java.io.IOException;
 public class UsersController {
 
     private final User DEFAULT_USER_ENTITY = new User();
-//    private final UserService userService;
+    private final UserService userService;
+
+    public UsersController(UserService userService) {
+        this.userService = userService;
+    }
 
     @Operation(
             summary = "Вывод данных о Пользователе",
@@ -55,7 +60,7 @@ public class UsersController {
     )
     @GetMapping("/{userID}")
     public ResponseEntity<User> getUser(@Parameter(description = "ИД номер Пользователя") @PathVariable Long userID) {
-        return ResponseEntity.ok(DEFAULT_USER_ENTITY);
+        return ResponseEntity.ok(userService.getUserByID(userID));
     }
 
     @Operation(
@@ -87,7 +92,7 @@ public class UsersController {
     @PostMapping("/{userID}/set_password")
     public ResponseEntity<User> setPassword(@Parameter(description = "Данные о пароле Пользователя") @RequestBody NewPassword inpPWD,
                                             @Parameter(description = "ИД номер Пользователя") @PathVariable Long userID) {
-//        User resultEntity = userService.updatePassword(inpPWD);
+//        User resultEntity = userService.updatePassword(userID, inpPWD);
 //        return ResponseEntity.ok(resultEntity);
         return ResponseEntity.ok(DEFAULT_USER_ENTITY);
     }

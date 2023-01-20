@@ -14,19 +14,19 @@ import java.util.Objects;
 public class User{
     @Id
     @Column(name = "user_id")
-    private Long userID = 1L;
-    private String email = "user@mail.com";
+    private Long userID;
+    private String email;
     @Column(name = "first_name")
-    private String firstName = "Иван";
+    private String firstName;
     @Column(name = "last_name")
-    private String lastName = "Петрович";
-    private String phone = "84951234567";
+    private String lastName;
+    private String phone;
     @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.USER;
+    private UserRole role;
     @Column(name = "avatar_path")
     private String avatarPath;
     @Column(name = "reg_date")
-    private LocalDateTime regDate = LocalDateTime.now();
+    private LocalDateTime regDate;
 
     @Override
     public boolean equals(Object o) {
