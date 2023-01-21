@@ -92,9 +92,8 @@ public class UsersController {
     @PostMapping("/{userID}/set_password")
     public ResponseEntity<User> setPassword(@Parameter(description = "Данные о пароле Пользователя") @RequestBody NewPassword inpPWD,
                                             @Parameter(description = "ИД номер Пользователя") @PathVariable Long userID) {
-//        User resultEntity = userService.updatePassword(userID, inpPWD);
-//        return ResponseEntity.ok(resultEntity);
-        return ResponseEntity.ok(DEFAULT_USER_ENTITY);
+        User resultEntity = userService.updatePassword(userID, inpPWD);
+        return ResponseEntity.ok(resultEntity);
     }
 
     @Operation(
@@ -138,8 +137,7 @@ public class UsersController {
     )
     @PatchMapping
     public ResponseEntity<User> updateUserData(@RequestBody User inpUser) {
-//        User resultEntity = userService.updateUser(inpUser);
-        User resultEntity = DEFAULT_USER_ENTITY;
+        User resultEntity = userService.updateUser(inpUser);
         if (resultEntity != null) {
             return ResponseEntity.ok(DEFAULT_USER_ENTITY);
         } else {
