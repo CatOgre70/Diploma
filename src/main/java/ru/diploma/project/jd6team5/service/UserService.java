@@ -1,15 +1,16 @@
 package ru.diploma.project.jd6team5.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.RegisterReq;
 import ru.diploma.project.jd6team5.dto.User;
-import ru.diploma.project.jd6team5.exception.BadPasswordException;
-import ru.diploma.project.jd6team5.exception.NewPasswordAlreadyUsedException;
-import ru.diploma.project.jd6team5.exception.RegisterReqNotFoundException;
-import ru.diploma.project.jd6team5.exception.UserNotFoundException;
+import ru.diploma.project.jd6team5.exception.*;
 import ru.diploma.project.jd6team5.model.NewPassword;
 import ru.diploma.project.jd6team5.repository.RegisterReqRepository;
 import ru.diploma.project.jd6team5.repository.UserRepository;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Класс описывающий логику получения и обработки информации по сущности Пользователь
@@ -31,7 +32,7 @@ public class UserService {
      * @return представление Пользователя
      */
     public User getUserByID(Long userID) {
-        User userFound = userRepo.findUserByID(userID).orElse(null);
+        User userFound = userRepo.findUserByUserID(userID).orElse(null);
         if (userFound == null){
             throw new UserNotFoundException("User not found!");
         }
@@ -68,5 +69,15 @@ public class UserService {
         userFound.setRole(inpUser.getRole());
         userRepo.save(userFound);
         return userFound;
+    }
+
+    public void updateUserAvatar(Long userID, MultipartFile inpPicture) {
+        User userFound = getUserByID(userID);
+        String imagePath = inpPicture.getOriginalFilename();
+        if (Files.exists(Path.of(imagePath))){
+            userFound.setAvatarPath(imagePath);
+            userRepo.save(userFound);
+        } else { throw new FileNotFoundException("Не найден файл по указанному пути");
+        }
     }
 }

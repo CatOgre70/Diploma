@@ -175,7 +175,7 @@ public class UsersController {
         if (inpPicture.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().body("File great than 10 Mb!");
         }
-//        userService.updateUserAvatar(userID, inpPicture);
+        userService.updateUserAvatar(userID, inpPicture);
         return ResponseEntity.ok().body("File Photo was uploaded successfully");
     }
 }
