@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.User;
 import ru.diploma.project.jd6team5.model.NewPassword;
+import ru.diploma.project.jd6team5.service.UserService;
 
 import java.io.IOException;
 
@@ -22,7 +23,11 @@ import java.io.IOException;
 public class UsersController {
 
     private final User DEFAULT_USER_ENTITY = new User();
-//    private final UserService userService;
+    private final UserService userService;
+
+    public UsersController(UserService userService) {
+        this.userService = userService;
+    }
 
     @Operation(
             summary = "Вывод данных о Пользователе",
@@ -55,7 +60,7 @@ public class UsersController {
     )
     @GetMapping("/{userID}")
     public ResponseEntity<User> getUser(@Parameter(description = "ИД номер Пользователя") @PathVariable Long userID) {
-        return ResponseEntity.ok(DEFAULT_USER_ENTITY);
+        return ResponseEntity.ok(userService.getUserByID(userID));
     }
 
     @Operation(
@@ -87,9 +92,8 @@ public class UsersController {
     @PostMapping("/{userID}/set_password")
     public ResponseEntity<User> setPassword(@Parameter(description = "Данные о пароле Пользователя") @RequestBody NewPassword inpPWD,
                                             @Parameter(description = "ИД номер Пользователя") @PathVariable Long userID) {
-//        User resultEntity = userService.updatePassword(inpPWD);
-//        return ResponseEntity.ok(resultEntity);
-        return ResponseEntity.ok(DEFAULT_USER_ENTITY);
+        User resultEntity = userService.updatePassword(userID, inpPWD);
+        return ResponseEntity.ok(resultEntity);
     }
 
     @Operation(
@@ -133,8 +137,7 @@ public class UsersController {
     )
     @PatchMapping
     public ResponseEntity<User> updateUserData(@RequestBody User inpUser) {
-//        User resultEntity = userService.updateUser(inpUser);
-        User resultEntity = DEFAULT_USER_ENTITY;
+        User resultEntity = userService.updateUser(inpUser);
         if (resultEntity != null) {
             return ResponseEntity.ok(DEFAULT_USER_ENTITY);
         } else {
@@ -172,7 +175,7 @@ public class UsersController {
         if (inpPicture.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().body("File great than 10 Mb!");
         }
-//        userService.updateUserAvatar(userID, inpPicture);
+        userService.updateUserAvatar(userID, inpPicture);
         return ResponseEntity.ok().body("File Photo was uploaded successfully");
     }
 }
