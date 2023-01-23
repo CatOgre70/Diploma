@@ -3,11 +3,10 @@ package ru.diploma.project.jd6team5.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.diploma.project.jd6team5.dto.RegisterReq;
-import ru.diploma.project.jd6team5.dto.User;
+import ru.diploma.project.jd6team5.dto.NewPassword;
+import ru.diploma.project.jd6team5.model.RegisterReq;
+import ru.diploma.project.jd6team5.model.User;
 import ru.diploma.project.jd6team5.exception.*;
-import ru.diploma.project.jd6team5.exception.FileNotFoundException;
-import ru.diploma.project.jd6team5.model.NewPassword;
 import ru.diploma.project.jd6team5.repository.RegisterReqRepository;
 import ru.diploma.project.jd6team5.repository.UserRepository;
 

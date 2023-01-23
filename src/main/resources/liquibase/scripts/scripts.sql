@@ -75,3 +75,8 @@ create table comment
     create_date timestamp without time zone,
     CONSTRAINT comment_id_pkey PRIMARY KEY (id)
 );
+
+--changeset mkachalov:1
+alter table ads
+    add title text;
+

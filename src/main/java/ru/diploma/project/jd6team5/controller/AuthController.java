@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.diploma.project.jd6team5.dto.LoginReq;
-import ru.diploma.project.jd6team5.dto.RegisterReq;
-import ru.diploma.project.jd6team5.dto.User;
-import ru.diploma.project.jd6team5.dto.UserRole;
+import ru.diploma.project.jd6team5.model.LoginReq;
+import ru.diploma.project.jd6team5.model.RegisterReq;
+import ru.diploma.project.jd6team5.model.User;
+import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.service.AuthService;
 
-import static ru.diploma.project.jd6team5.dto.UserRole.USER;
+import static ru.diploma.project.jd6team5.constants.UserRole.USER;
 
 @RestController
 @CrossOrigin(value = "http://localhost:3000")

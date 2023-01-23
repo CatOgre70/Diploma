@@ -11,8 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.diploma.project.jd6team5.dto.User;
-import ru.diploma.project.jd6team5.model.NewPassword;
+import ru.diploma.project.jd6team5.dto.NewPassword;
+import ru.diploma.project.jd6team5.model.User;
 import ru.diploma.project.jd6team5.service.UserService;
 
 import java.io.IOException;
