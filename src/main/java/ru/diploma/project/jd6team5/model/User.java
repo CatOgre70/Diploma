@@ -1,8 +1,9 @@
-package ru.diploma.project.jd6team5.dto;
+package ru.diploma.project.jd6team5.model;
 
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.diploma.project.jd6team5.constants.UserRole;
 
 
 import java.time.LocalDateTime;

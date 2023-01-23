@@ -6,8 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import ru.diploma.project.jd6team5.dto.RegisterReq;
-import ru.diploma.project.jd6team5.dto.UserRole;
+import ru.diploma.project.jd6team5.model.RegisterReq;
+import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.service.AuthService;
 
 @Service
