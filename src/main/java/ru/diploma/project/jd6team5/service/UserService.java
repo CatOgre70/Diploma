@@ -106,7 +106,7 @@ public class UserService {
         if (Files.exists(imagePath)){
             userFound.setAvatarPath(imagePath.toFile().getPath());
             userRepo.save(userFound);
-        } else { throw new FileNotFoundException("Не найден файл по указанному пути");
+        } else { throw new ImageFileNotFoundException("Не найден файл по указанному пути");
         }
     }
 }

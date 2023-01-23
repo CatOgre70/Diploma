@@ -41,7 +41,9 @@ public class AuthServiceImpl implements AuthService {
         UserDetails userD = userDM.loadUserByUsername(userName);
         String encryptPwd = userD.getPassword();
         String encryptPwdWithoutType = encryptPwd.substring(8);
-        LoginReq login = new LoginReq(userName, password);
+        LoginReq login = new LoginReq();
+        login.setUsername(userName);
+        login.setPassword(password);
         loginReqRepo.save(login);
         return passEnc.matches(encryptPwd, encryptPwdWithoutType);
     }
@@ -59,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
                         .build()
         );
         Long nextUserID = userRepo.count() + 1;
-        ru.diploma.project.jd6team5.dto.User userInst = new ru.diploma.project.jd6team5.dto.User();
+        ru.diploma.project.jd6team5.model.User userInst = new ru.diploma.project.jd6team5.model.User();
         userInst.setRegDate(LocalDateTime.now());
         userInst.setRole(role);
         userInst.setPhone(registerReq.getPhone());
