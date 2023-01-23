@@ -139,7 +139,7 @@ public class UsersController {
     public ResponseEntity<User> updateUserData(@RequestBody User inpUser) {
         User resultEntity = userService.updateUser(inpUser);
         if (resultEntity != null) {
-            return ResponseEntity.ok(DEFAULT_USER_ENTITY);
+            return ResponseEntity.ok(resultEntity);
         } else {
             return ResponseEntity.notFound().build();
         }

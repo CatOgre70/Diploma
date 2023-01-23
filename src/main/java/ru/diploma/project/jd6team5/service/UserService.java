@@ -1,16 +1,21 @@
 package ru.diploma.project.jd6team5.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.RegisterReq;
 import ru.diploma.project.jd6team5.dto.User;
 import ru.diploma.project.jd6team5.exception.*;
+import ru.diploma.project.jd6team5.exception.FileNotFoundException;
 import ru.diploma.project.jd6team5.model.NewPassword;
 import ru.diploma.project.jd6team5.repository.RegisterReqRepository;
 import ru.diploma.project.jd6team5.repository.UserRepository;
 
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 /**
  * Класс описывающий логику получения и обработки информации по сущности Пользователь
@@ -19,11 +24,26 @@ import java.nio.file.Path;
 public class UserService {
     private final UserRepository userRepo;
     private final RegisterReqRepository regReqRepo;
+    @Value("${users.avatars.dir.path}")
+    private String targetAvatarDir;
     /** Конструктор */
     public UserService(UserRepository userRepo,
                        RegisterReqRepository regReqRepo) {
         this.userRepo = userRepo;
         this.regReqRepo = regReqRepo;
+    }
+
+    /**
+     * Метод возвращает расширение файла, полученного через входящее значение переменной
+     * @param inpPath
+     * @return <i><b>пример:</b></i> jpg, bmp, png
+     */
+    private String getExtensionOfFile(String inpPath){
+        if (inpPath.contains(".")){
+            return inpPath.substring(inpPath.lastIndexOf("."), inpPath.length());
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -71,11 +91,21 @@ public class UserService {
         return userFound;
     }
 
-    public void updateUserAvatar(Long userID, MultipartFile inpPicture) {
+    public void updateUserAvatar(Long userID, MultipartFile inpPicture) throws IOException {
         User userFound = getUserByID(userID);
-        String imagePath = inpPicture.getOriginalFilename();
-        if (Files.exists(Path.of(imagePath))){
-            userFound.setAvatarPath(imagePath);
+        Path imagePath = Path.of(targetAvatarDir + "/avatar" + userID + getExtensionOfFile(inpPicture.getOriginalFilename()));
+        Files.createDirectories(imagePath.getParent());
+        Files.deleteIfExists(imagePath);
+        // Создание потоков и вызов метода передачи данных по 1-му килобайту
+        try (InputStream inpStream = inpPicture.getInputStream();
+             OutputStream outStream = Files.newOutputStream(imagePath, CREATE_NEW);
+             BufferedInputStream bufInpStream = new BufferedInputStream(inpStream, 1024);
+             BufferedOutputStream bufOutStream = new BufferedOutputStream(outStream, 1024);
+        ) {
+            bufInpStream.transferTo(bufOutStream);
+        }
+        if (Files.exists(imagePath)){
+            userFound.setAvatarPath(imagePath.toFile().getPath());
             userRepo.save(userFound);
         } else { throw new FileNotFoundException("Не найден файл по указанному пути");
         }

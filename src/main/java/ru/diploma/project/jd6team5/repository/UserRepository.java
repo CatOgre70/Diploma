@@ -10,5 +10,4 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     /** Получение Пользователя по его ИД номеру */
     Optional<User> findUserByUserID(Long userID);
-
 }
