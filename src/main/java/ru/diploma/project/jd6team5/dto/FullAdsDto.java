@@ -23,9 +23,7 @@ public class FullAdsDto {
     private Float price;
     private String email;
     private String phone;
-    @Enumerated(EnumType.STRING)
     private CurrencyCode currency;
-    @Enumerated(EnumType.STRING)
     private AdsStatus status;
     private Long imageListID;
 
