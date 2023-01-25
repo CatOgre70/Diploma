@@ -4,10 +4,7 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@Data
 public class NewPassword {
     private String currentPassword;
     private String newPassword;
