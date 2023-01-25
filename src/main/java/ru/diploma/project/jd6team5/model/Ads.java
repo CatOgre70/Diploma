@@ -7,25 +7,22 @@ import ru.diploma.project.jd6team5.constants.AdsStatus;
 import ru.diploma.project.jd6team5.constants.CurrencyCode;
 
 @Entity(name = "ads")
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
 public class Ads {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "user_id")
-    private Long userID = 1L;
-    private String title = "Набор авто-инструментов фирмы \"Автотехник\"";
-    private String description = "Набор ручного инструмента предназначенный для ремонта автотехники";
-    private Float price = 5000.67f;
+    private Long userID;
+    private String title;
+    private String description;
+    private Float price;
     @Enumerated(EnumType.STRING)
-    private CurrencyCode currency = CurrencyCode.RUB;
+    private CurrencyCode currency;
     @Enumerated(EnumType.STRING)
-    private AdsStatus status = AdsStatus.ACTIVE;
+    private AdsStatus status;
     @Column(name = "image_list_id")
     private Long imageListID;
 
