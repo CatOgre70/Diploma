@@ -6,12 +6,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "comment")
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
