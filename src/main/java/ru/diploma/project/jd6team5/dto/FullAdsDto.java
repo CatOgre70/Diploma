@@ -9,10 +9,7 @@ import javax.persistence.Enumerated;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@Data
 public class FullAdsDto {
 
     public interface UpdateByUser {
