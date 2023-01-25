@@ -1,4 +1,4 @@
-package ru.diploma.project.jd6team5.dto;
+package ru.diploma.project.jd6team5.model;
 
 import javax.persistence.*;
 import lombok.Getter;
