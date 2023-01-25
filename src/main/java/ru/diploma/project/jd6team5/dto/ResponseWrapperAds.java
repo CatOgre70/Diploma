@@ -7,10 +7,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@Data
 public class ResponseWrapperAds {
     private long count;
     private List<Ads> results;
