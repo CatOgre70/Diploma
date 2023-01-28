@@ -29,7 +29,7 @@ public class AuthController {
     }
 
     @Operation(
-            summary = "Авторизация Пользователя",
+            summary = "login - Авторизация Пользователя",
             operationId = "login",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(

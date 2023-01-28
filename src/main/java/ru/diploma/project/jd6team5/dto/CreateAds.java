@@ -2,9 +2,9 @@ package ru.diploma.project.jd6team5.dto;
 
 import lombok.*;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 public class CreateAds {
     private String description;
     private Float price;

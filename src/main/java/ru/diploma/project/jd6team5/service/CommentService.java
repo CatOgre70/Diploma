@@ -26,7 +26,7 @@ public class CommentService {
     }
 
     public CommentDto addComment(CommentDto dto) {
-        Comment result =  commentRepository.save(mapper.dtoToEntity(dto));
+        Comment result = commentRepository.save(mapper.dtoToEntity(dto));
         return mapper.entityToDto(result);
     }
 

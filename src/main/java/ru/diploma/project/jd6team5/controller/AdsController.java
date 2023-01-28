@@ -16,7 +16,6 @@ import ru.diploma.project.jd6team5.model.Comment;
 import ru.diploma.project.jd6team5.service.AdsService;
 import ru.diploma.project.jd6team5.service.CommentService;
 
-
 import java.io.IOException;
 
 @RestController
@@ -31,17 +30,54 @@ public class AdsController {
         this.commentService = commentService;
     }
 
+    @Operation(
+            summary = "getALLAds - Все Объявления",
+            operationId = "getALLAds",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = Ads.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    )
+            }, tags = "Объявления"
+    )
     @GetMapping
     public ResponseEntity<ResponseWrapperAds> getAllAds() {
         return ResponseEntity.ok(adsService.getAllAds());
     }
 
+    @Operation(
+            summary = "Все комментарии по Объявлению",
+            operationId = "getAllCommentsByAds",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = Ads.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    )
+            }, tags = "Объявления"
+    )
     @GetMapping("/{adsID}/comments")
-    public ResponseEntity<ResponseWrapperComments> getAllCommentsByAds(@PathVariable Long adsID) {
+    public ResponseEntity<ResponseWrapperComments> getAllCommentsByAds(
+            @Parameter(description = "ИД номер Объявлении") @PathVariable Long adsID) {
         return ResponseEntity.ok(commentService.getAllCommentsByAdsId(adsID));
     }
-
-
 
     @Operation(
             summary = "Вся инфа по объявлению",
@@ -67,23 +103,16 @@ public class AdsController {
         return ResponseEntity.ok(adsService.findFullAds(adsID));
     }
 
-
-
-    @Operation(            summary = "Ввод данных Объявления",
+    @Operation(
+            summary = "Ввод данных Объявления",
             operationId = "addAds",
-            /*requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                            schema = @Schema(implementation = CreateAds.class)
-                    )
-            ),*/
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Ads.class)
+                                    schema = @Schema(implementation = AdsDto.class)
                             )
                     ),
                     @ApiResponse(
@@ -91,7 +120,7 @@ public class AdsController {
                             description = "Created",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Ads.class)
+                                    schema = @Schema(implementation = AdsDto.class)
                             )
                     ),
                     @ApiResponse(
@@ -108,24 +137,33 @@ public class AdsController {
                             responseCode = "404",
                             description = "Not Found",
                             content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    ),
+                    @ApiResponse(
+                            responseCode = "415",
+                            description = "Unsupported Media Type",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
                     )},
             tags = "Объявления"
     )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdsDto> addAds(@Parameter(description = "Первичные данные об Объявлении") @RequestPart CreateAds newAds,
-                                             @Parameter(description = "Путь к файлу") @RequestPart MultipartFile inpPicture)  throws IOException {
-        if (inpPicture.getSize() > 1024 * 1024 * 10) {
+    public ResponseEntity<AdsDto> addAds(@Parameter(description = "Первичные данные об Объявлении"
+                                                     , schema = @Schema(implementation = CreateAds.class)
+                                             ) @RequestBody CreateAds newAds,
+                                         @Parameter(description = "Путь к файлу"
+//                                                 , schema = @Schema(type = "string", format = "binary")
+                                                 , allowEmptyValue = true
+                                         ) @RequestBody(required = false)
+                                                 MultipartFile inpPicture
+    ) throws IOException {
+        if (inpPicture != null && inpPicture.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(adsService.createAds(newAds));
+        return ResponseEntity.ok(adsService.createAds(1L, newAds));
     }
 
-
-
-
     @Operation(
-            summary = "Ввод Комментария в Объявлении",
-            operationId = "addComments",
+            summary = "addCommentToAds - Ввод Комментария в Объявлении",
+            operationId = "addCommentToAds",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -159,7 +197,9 @@ public class AdsController {
             tags = "Объявления"
     )
     @PostMapping(path = "/{adsID}/comments")
-    public ResponseEntity<CommentDto> addCommentToAds(@RequestBody CommentDto inpComment){
+    public ResponseEntity<CommentDto> addCommentToAds(@PathVariable Long adsID, @RequestBody CommentDto inpComment){
+        Long inAdsID = adsService.findFullAds(adsID).getId();
+        inpComment.setAdsID(inAdsID);
         return ResponseEntity.ok(commentService.addComment(inpComment));
     }
     @Operation(
@@ -191,7 +231,7 @@ public class AdsController {
 
     @Operation(
             summary = "Изменение данных в Объявлении",
-            operationId = "addComments",
+            operationId = "updateAds",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,

@@ -1,8 +1,8 @@
 package ru.diploma.project.jd6team5.model;
 
 import javax.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 import ru.diploma.project.jd6team5.constants.UserRole;
 
 
@@ -12,6 +12,10 @@ import java.util.Objects;
 @Entity(name = "users")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class User{
     @Id
     @Column(name = "user_id")

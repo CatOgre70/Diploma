@@ -4,11 +4,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.NewPassword;
+import ru.diploma.project.jd6team5.dto.UserDto;
+import ru.diploma.project.jd6team5.exception.ImageFileNotFoundException;
+import ru.diploma.project.jd6team5.exception.NewPasswordAlreadyUsedException;
+import ru.diploma.project.jd6team5.exception.RegisterReqNotFoundException;
+import ru.diploma.project.jd6team5.exception.UserNotFoundException;
 import ru.diploma.project.jd6team5.model.RegisterReq;
 import ru.diploma.project.jd6team5.model.User;
-import ru.diploma.project.jd6team5.exception.*;
 import ru.diploma.project.jd6team5.repository.RegisterReqRepository;
 import ru.diploma.project.jd6team5.repository.UserRepository;
+import ru.diploma.project.jd6team5.utils.UserMapper;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -23,13 +28,16 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 public class UserService {
     private final UserRepository userRepo;
     private final RegisterReqRepository regReqRepo;
+    private final UserMapper userMapper;
     @Value("${users.avatars.dir.path}")
     private String targetAvatarDir;
     /** Конструктор */
     public UserService(UserRepository userRepo,
-                       RegisterReqRepository regReqRepo) {
+                       RegisterReqRepository regReqRepo,
+                       UserMapper userMapper) {
         this.userRepo = userRepo;
         this.regReqRepo = regReqRepo;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -59,12 +67,21 @@ public class UserService {
     }
 
     /**
+     * Метод, который выводит информацию о Пользователе (DTO)
+     * @param inpUser
+     * @return представление Пользователя
+     */
+    public UserDto getUserDto(User inpUser) {
+        return userMapper.entityToDto(inpUser);
+    }
+
+    /**
      * Метод, который вносит изменения в информацию Пользователя
      * @param userID
      * @param newPassword
      * @return
      */
-    public User updatePassword(Long userID, NewPassword newPassword){
+    public UserDto updatePassword(Long userID, NewPassword newPassword){
         User userFound = getUserByID(userID);
         RegisterReq regReq = regReqRepo.getRegisterReqByUserID(userFound.getUserID()).orElse(null);
         if (regReq == null){
@@ -74,20 +91,20 @@ public class UserService {
         }
         regReq.setPassword(newPassword.getNewPassword());
         regReqRepo.save(regReq);
-        return userFound;
+        return userMapper.entityToDto(userFound);
     }
 
-    public User updateUser(User inpUser) {
-        User userFound = getUserByID(inpUser.getUserID());
-        userFound.setEmail(inpUser.getEmail());
-        userFound.setAvatarPath(inpUser.getAvatarPath());
-        userFound.setFirstName(inpUser.getFirstName());
-        userFound.setLastName(inpUser.getLastName());
-        userFound.setPhone(inpUser.getPhone());
-        userFound.setRegDate(inpUser.getRegDate());
-        userFound.setRole(inpUser.getRole());
+    public UserDto updateUser(UserDto inpUserDto) {
+        User userFound = getUserByID(inpUserDto.getUserID());
+        userFound.setEmail(inpUserDto.getEmail());
+        userFound.setAvatarPath(inpUserDto.getAvatarPath());
+        userFound.setFirstName(inpUserDto.getFirstName());
+        userFound.setLastName(inpUserDto.getLastName());
+        userFound.setPhone(inpUserDto.getPhone());
+        userFound.setRegDate(inpUserDto.getRegDate());
+        userFound.setRole(inpUserDto.getRole());
         userRepo.save(userFound);
-        return userFound;
+        return userMapper.entityToDto(userFound);
     }
 
     public void updateUserAvatar(Long userID, MultipartFile inpPicture) throws IOException {
