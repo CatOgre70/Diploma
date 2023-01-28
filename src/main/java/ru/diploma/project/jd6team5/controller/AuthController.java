@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.diploma.project.jd6team5.model.LoginReq;
-import ru.diploma.project.jd6team5.model.RegisterReq;
+import ru.diploma.project.jd6team5.dto.LoginReqDto;
+import ru.diploma.project.jd6team5.dto.RegReqDto;
 import ru.diploma.project.jd6team5.model.User;
 import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.service.AuthService;
@@ -34,7 +34,7 @@ public class AuthController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = LoginReq.class)
+                            schema = @Schema(implementation = LoginReqDto.class)
                     )
             ),
             responses = {
@@ -64,7 +64,7 @@ public class AuthController {
             tags = "Авторизация"
     )
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginReq req) {
+    public ResponseEntity<?> login(@RequestBody LoginReqDto req) {
         if (authService.login(req.getUsername(), req.getPassword())) {
             return ResponseEntity.ok().build();
         } else {
@@ -78,7 +78,7 @@ public class AuthController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = RegisterReq.class)
+                            schema = @Schema(implementation = RegReqDto.class)
                     )
             ),
             responses = {
@@ -108,7 +108,7 @@ public class AuthController {
             tags = "Авторизация"
     )
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterReq req) {
+    public ResponseEntity<?> register(@RequestBody RegReqDto req) {
         UserRole role = req.getRole() == null ? USER : req.getRole();
         if (authService.register(req, role)) {
             return ResponseEntity.ok().build();

@@ -2,8 +2,8 @@ package ru.diploma.project.jd6team5.dto;
 
 import lombok.*;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class AdsDto {
     private Long userID;

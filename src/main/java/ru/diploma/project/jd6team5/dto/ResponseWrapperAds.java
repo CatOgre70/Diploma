@@ -5,7 +5,6 @@ import ru.diploma.project.jd6team5.model.Ads;
 
 import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class ResponseWrapperAds {

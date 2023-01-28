@@ -1,10 +1,9 @@
 package ru.diploma.project.jd6team5.dto;
 
-import javax.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.diploma.project.jd6team5.constants.UserRole;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class RegReqDto {
@@ -15,5 +14,5 @@ public class RegReqDto {
     private String firstName;
     private String lastName;
     private String phone;
-    private UserRole role = UserRole.USER;
+    private UserRole role;
 }

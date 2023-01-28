@@ -5,14 +5,16 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 public class UserDto {
     private Long userID;
     private String email;
     private String firstName;
     private String lastName;
+    private String username;
+    private String password;
     private String phone;
     private UserRole role;
     private String avatarPath;

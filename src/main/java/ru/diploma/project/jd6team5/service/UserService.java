@@ -7,11 +7,8 @@ import ru.diploma.project.jd6team5.dto.NewPassword;
 import ru.diploma.project.jd6team5.dto.UserDto;
 import ru.diploma.project.jd6team5.exception.ImageFileNotFoundException;
 import ru.diploma.project.jd6team5.exception.NewPasswordAlreadyUsedException;
-import ru.diploma.project.jd6team5.exception.RegisterReqNotFoundException;
 import ru.diploma.project.jd6team5.exception.UserNotFoundException;
-import ru.diploma.project.jd6team5.model.RegisterReq;
 import ru.diploma.project.jd6team5.model.User;
-import ru.diploma.project.jd6team5.repository.RegisterReqRepository;
 import ru.diploma.project.jd6team5.repository.UserRepository;
 import ru.diploma.project.jd6team5.utils.UserMapper;
 
@@ -27,16 +24,13 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Service
 public class UserService {
     private final UserRepository userRepo;
-    private final RegisterReqRepository regReqRepo;
     private final UserMapper userMapper;
     @Value("${users.avatars.dir.path}")
     private String targetAvatarDir;
     /** Конструктор */
     public UserService(UserRepository userRepo,
-                       RegisterReqRepository regReqRepo,
                        UserMapper userMapper) {
         this.userRepo = userRepo;
-        this.regReqRepo = regReqRepo;
         this.userMapper = userMapper;
     }
 
@@ -83,15 +77,11 @@ public class UserService {
      */
     public UserDto updatePassword(Long userID, NewPassword newPassword){
         User userFound = getUserByID(userID);
-        RegisterReq regReq = regReqRepo.getRegisterReqByUserID(userFound.getUserID()).orElse(null);
-        if (regReq == null){
-            throw new RegisterReqNotFoundException("У Пользователя не нашлось Регистрации");
-        } else if (newPassword.getNewPassword().equals(regReq.getPassword())){
+        if (newPassword.getNewPassword().equals(userFound.getPassword())){
             throw new NewPasswordAlreadyUsedException("Пароль совпадает с текущим");
         }
-        regReq.setPassword(newPassword.getNewPassword());
-        regReqRepo.save(regReq);
-        return userMapper.entityToDto(userFound);
+        userFound.setPassword(newPassword.getNewPassword());
+        return userMapper.entityToDto(userRepo.save(userFound));
     }
 
     public UserDto updateUser(UserDto inpUserDto) {

@@ -10,12 +10,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity(name = "users")
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
 public class User{
     @Id
     @Column(name = "user_id")
@@ -25,6 +22,8 @@ public class User{
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+    private String username;
+    private String password;
     private String phone;
     @Enumerated(EnumType.STRING)
     private UserRole role;
@@ -32,19 +31,4 @@ public class User{
     private String avatarPath;
     @Column(name = "reg_date")
     private LocalDateTime regDate;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User user)) return false;
-        return Objects.equals(getUserID(), user.getUserID()) && Objects.equals(getEmail(), user.getEmail())
-                && Objects.equals(getFirstName(), user.getFirstName())
-                && Objects.equals(getLastName(), user.getLastName())
-                && Objects.equals(getPhone(), user.getPhone()) && getRole() == user.getRole();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getUserID(), getFirstName(), getLastName());
-    }
 }
