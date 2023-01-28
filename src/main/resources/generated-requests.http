@@ -75,16 +75,24 @@ Authorization: Basic user password
 
 ###
 POST http://localhost:8080/ads
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="properties"
 Content-Type: application/json
-Authorization: Basic user password
 
 {
-  "image": "123",
-  "price": 123,
-  "description": "123",
-  "pk": 1233,
-  "title": "123"
+  "description": "Удалить 6",
+  "price": 450,
+  "title": "Удалить 6 + "
 }
+
+--WebAppBoundary
+Content-Disposition: form-data; name="image"; filename="image_source.jpg"
+Content-Type: application/octet-stream
+
+< ./static/ads_images/image_source.jpg
+--WebAppBoundary--
 
 ###
 GET http://localhost:8080/ads

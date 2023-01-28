@@ -137,28 +137,21 @@ public class AdsController {
                             responseCode = "404",
                             description = "Not Found",
                             content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
-                    ),
-                    @ApiResponse(
-                            responseCode = "415",
-                            description = "Unsupported Media Type",
-                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
                     )},
             tags = "Объявления"
     )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdsDto> addAds(@Parameter(description = "Первичные данные об Объявлении"
                                                      , schema = @Schema(implementation = CreateAds.class)
-                                             ) @RequestBody CreateAds newAds,
+                                             ) @RequestPart CreateAds properties,
                                          @Parameter(description = "Путь к файлу"
-//                                                 , schema = @Schema(type = "string", format = "binary")
                                                  , allowEmptyValue = true
-                                         ) @RequestBody(required = false)
-                                                 MultipartFile inpPicture
+                                         ) @RequestPart MultipartFile image
     ) throws IOException {
-        if (inpPicture != null && inpPicture.getSize() > 1024 * 1024 * 10) {
+        if (image != null && image.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(adsService.createAds(1L, newAds));
+        return ResponseEntity.ok(adsService.createAds(1L, properties, image));
     }
 
     @Operation(
@@ -167,7 +160,7 @@ public class AdsController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Comment.class)
+                            schema = @Schema(implementation = CommentDto.class)
                     )
             ),
             responses = {

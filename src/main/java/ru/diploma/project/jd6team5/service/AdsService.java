@@ -48,13 +48,22 @@ public class AdsService {
         this.adsImgMapper = adsImgMapper;
     }
 
-    public AdsDto createAds(Long userID, CreateAds createAds) {
+    public AdsDto createAds(Long userID, CreateAds createAds, MultipartFile inpPicture) throws IOException {
         Ads newAds = new Ads();
         newAds.setUserID(userID);
         newAds.setDescription(createAds.getDescription());
         newAds.setPrice(createAds.getPrice());
         newAds.setTitle(createAds.getTitle());
-        return compactMapper.entityToDto(adsRepository.save(newAds));
+        Ads createdAds = adsRepository.save(newAds);
+        AdsImages imageList = new AdsImages();
+        imageList.setImageID(1L);
+        Path imagePath = saveIncomeImage(createdAds.getId(), 1L, inpPicture);
+        if (Files.exists(imagePath)){
+            imageList.setImagePath(imagePath.toFile().getParent());
+            AdsImages createdImageList = adsImageRepo.save(imageList);
+            createdAds.setImageListID(createdImageList.getId());
+            return compactMapper.entityToDto(adsRepository.save(createdAds));
+        } else { throw new ImageFileNotFoundException("Файл с картинкой Объявления не сохранился"); }
     }
 
     public FullAdsDto findFullAds(Long id) {
@@ -86,10 +95,9 @@ public class AdsService {
         return new ResponseWrapperAds(foundAds.size(), foundAds);
     }
 
-    public AdsImagesDto updateAndGetListImages(Long adsID, MultipartFile inpPicture) throws IOException {
-        Ads adsFound = adsRepository.findById(adsID).orElseThrow(AdsNotFoundException::new);
-        AdsImages imageList = adsImageRepo.getAdsImagesByIdAndImageID(adsFound.getImageListID(), 1L).orElse(null);
-        Path imagePath = Path.of(targetImagesDir + "/image_" + adsID + "_1" + getExtensionOfFile(inpPicture.getOriginalFilename()));
+    private Path saveIncomeImage(Long adsID, Long imageID,MultipartFile inpPicture) throws IOException {
+        Path imagePath = Path.of(targetImagesDir + "/image_" + adsID + "_" + imageID +
+                getExtensionOfFile(inpPicture.getOriginalFilename()));
         Files.createDirectories(imagePath.getParent());
         Files.deleteIfExists(imagePath);
         // Создание потоков и вызов метода передачи данных по 1-му килобайту
@@ -100,6 +108,13 @@ public class AdsService {
         ) {
             bufInpStream.transferTo(bufOutStream);
         }
+        return imagePath;
+    }
+
+    public AdsImagesDto updateAndGetListImages(Long adsID, MultipartFile inpPicture) throws IOException {
+        Ads adsFound = adsRepository.findById(adsID).orElseThrow(AdsNotFoundException::new);
+        AdsImages imageList = adsImageRepo.getAdsImagesByIdAndImageID(adsFound.getImageListID(), 1L).orElse(null);
+        Path imagePath = saveIncomeImage(adsID, 1L, inpPicture);
         if (Files.exists(imagePath)){
             if (imageList == null){ imageList = new AdsImages(); }
             imageList.setImageID(1L);
