@@ -7,8 +7,6 @@ import ru.diploma.project.jd6team5.constants.UserRole;
 @NoArgsConstructor
 @Data
 public class RegReqDto {
-    private Long id;
-    private Long userID;
     private String username;
     private String password;
     private String firstName;
