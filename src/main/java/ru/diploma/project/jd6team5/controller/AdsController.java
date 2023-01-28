@@ -18,6 +18,7 @@ import ru.diploma.project.jd6team5.service.CommentService;
 
 
 import java.io.IOException;
+import java.util.Collections;
 
 @RestController
 @RequestMapping(path = "/ads")
@@ -339,8 +340,11 @@ public class AdsController {
         return ResponseEntity.ok(commentService.updateComment(dto));
     }
 
-    /*@GetMapping("/me")   Тут надо достать id'шник свой из сессии. Я пока не умею))
+    @GetMapping("/me")
     public ResponseEntity<ResponseWrapperAds> getAdsMe() {
-        return ResponseEntity.ok();
-    }*/
+        ResponseWrapperAds response = new ResponseWrapperAds();
+        response.setCount(0);
+        response.setResults(Collections.EMPTY_LIST);
+        return ResponseEntity.ok(response);
+    }
 }
