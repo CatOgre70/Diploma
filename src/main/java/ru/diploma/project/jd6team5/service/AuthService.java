@@ -6,11 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import ru.diploma.project.jd6team5.model.RegisterReq;
 import ru.diploma.project.jd6team5.constants.UserRole;
-import ru.diploma.project.jd6team5.model.LoginReq;
-import ru.diploma.project.jd6team5.repository.LoginReqRepository;
-import ru.diploma.project.jd6team5.repository.RegisterReqRepository;
+import ru.diploma.project.jd6team5.dto.RegReqDto;
 import ru.diploma.project.jd6team5.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -21,14 +18,10 @@ public class AuthService {
     private final UserDetailsManager userDM;
     private final PasswordEncoder passEnc;
     private final UserRepository userRepo;
-    private final RegisterReqRepository regReqRepo;
-    private final LoginReqRepository loginReqRepo;
 
-    public AuthService(UserDetailsManager userDM, UserRepository userRepo, RegisterReqRepository regReqRepo, LoginReqRepository loginReqRepo) {
+    public AuthService(UserDetailsManager userDM, UserRepository userRepo) {
         this.userDM = userDM;
         this.userRepo = userRepo;
-        this.regReqRepo = regReqRepo;
-        this.loginReqRepo = loginReqRepo;
         this.passEnc = new BCryptPasswordEncoder();
     }
 
@@ -39,14 +32,11 @@ public class AuthService {
         UserDetails userD = userDM.loadUserByUsername(userName);
         String encryptPwd = userD.getPassword();
         String encryptPwdWithoutType = encryptPwd.substring(8);
-        LoginReq login = new LoginReq();
-        login.setUsername(userName);
-        login.setPassword(password);
-        loginReqRepo.save(login);
-        return passEnc.matches(encryptPwd, encryptPwdWithoutType);
+//        return passEnc.matches(encryptPwd, encryptPwdWithoutType);
+        return passEnc.matches(password, encryptPwdWithoutType);
     }
 
-    public boolean register(RegisterReq registerReq, UserRole role) {
+    public boolean register(RegReqDto registerReq, UserRole role) {
         if (userDM.userExists(registerReq.getUsername())) {
             return false;
         }
@@ -64,10 +54,10 @@ public class AuthService {
         userInst.setPhone(registerReq.getPhone());
         userInst.setFirstName(registerReq.getFirstName());
         userInst.setLastName(registerReq.getLastName());
+        userInst.setUsername(registerReq.getUsername());
+        userInst.setPassword(registerReq.getUsername());
         userInst.setUserID(nextUserID);
         userRepo.save(userInst);
-        registerReq.setUserID(nextUserID);
-        regReqRepo.save(registerReq);
         return true;
     }
 }

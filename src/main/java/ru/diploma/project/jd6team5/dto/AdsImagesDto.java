@@ -5,10 +5,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class AdsDto {
-    private Long userID;
-    private Long imageListID;
+public class AdsImagesDto {
     private Long id;
-    private Float price;
-    private String title;
+    private Long imageID;
+    private String imagePath;
 }
