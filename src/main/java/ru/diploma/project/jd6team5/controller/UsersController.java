@@ -7,12 +7,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.NewPassword;
-import ru.diploma.project.jd6team5.model.User;
+import ru.diploma.project.jd6team5.dto.UserDto;
 import ru.diploma.project.jd6team5.service.UserService;
 
 import java.io.IOException;
@@ -22,7 +23,6 @@ import java.io.IOException;
 @CrossOrigin(value = "http://localhost:3000")
 public class UsersController {
 
-    private final User DEFAULT_USER_ENTITY = new User();
     private final UserService userService;
 
     public UsersController(UserService userService) {
@@ -30,7 +30,7 @@ public class UsersController {
     }
 
     @Operation(
-            summary = "Вывод данных о Пользователе",
+            summary = "getUser - Вывод данных о Пользователе",
             operationId = "getUser_1",
             responses = {
                     @ApiResponse(
@@ -38,7 +38,7 @@ public class UsersController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = User.class)
+                                    schema = @Schema(implementation = UserDto.class)
                             )
                     ),
                     @ApiResponse(
@@ -58,15 +58,18 @@ public class UsersController {
                     )
             }, tags = "Пользователи"
     )
-    @GetMapping("/{userID}")
-    public ResponseEntity<User> getUser(@Parameter(description = "ИД номер Пользователя") @PathVariable Long userID) {
-        return ResponseEntity.ok(userService.getUserByID(userID));
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getUser(
+//            @Parameter(description = "ИД номер Пользователя") @PathVariable Long userID
+    ) {
+        UserDto instUserDto = userService.getUserDto(userService.getUserByID(1L));
+        return ResponseEntity.ok(instUserDto);
     }
 
     @Operation(
-            summary = "Ввод нового пароля Пользователя",
+            summary = "setPassword - Ввод нового пароля Пользователя",
             operationId = "setPassword",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            requestBody = @RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = NewPassword.class),
@@ -84,24 +87,24 @@ public class UsersController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = User.class)
+                                    schema = @Schema(implementation = UserDto.class)
                             )
                     )},
             tags = "Пользователи"
     )
-    @PostMapping("/{userID}/set_password")
-    public ResponseEntity<User> setPassword(@Parameter(description = "Данные о пароле Пользователя") @RequestBody NewPassword inpPWD,
-                                            @Parameter(description = "ИД номер Пользователя") @PathVariable Long userID) {
-        User resultEntity = userService.updatePassword(userID, inpPWD);
+    @PostMapping("/set_password")
+    public ResponseEntity<UserDto> setPassword(@Parameter(description = "Данные о пароле Пользователя") @RequestBody NewPassword inpPWD) {
+        UserDto resultEntity = userService.updatePassword(1L, inpPWD);
         return ResponseEntity.ok(resultEntity);
     }
 
     @Operation(
             summary = "Обновление данных о Пользователе",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            operationId = "updateUser",
+            requestBody = @RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = User.class)
+                            schema = @Schema(implementation = UserDto.class)
                     )
             ),
             responses = {
@@ -110,7 +113,7 @@ public class UsersController {
                             description = "Данные записаны!",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = User.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = UserDto.class))
                             )
                     ),
                     @ApiResponse(
@@ -135,9 +138,9 @@ public class UsersController {
                     )},
             tags = "Пользователи"
     )
-    @PatchMapping
-    public ResponseEntity<User> updateUserData(@RequestBody User inpUser) {
-        User resultEntity = userService.updateUser(inpUser);
+    @PatchMapping("/me")
+    public ResponseEntity<UserDto> updateUserData(@RequestBody UserDto inpUser) {
+        UserDto resultEntity = userService.updateUser(inpUser);
         if (resultEntity != null) {
             return ResponseEntity.ok(resultEntity);
         } else {
@@ -147,15 +150,7 @@ public class UsersController {
 
     @Operation(
             summary = "Обновление Аватарки Пользователя",
-            /*requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = MediaType.IMAGE_JPEG_VALUE,
-                            schema = @Schema(implementation = User.class),
-                            extensions = {@Extension(name = "*.jpeg", properties = {}),
-                                    @Extension(name = "*.jpg", properties = {})
-                            }
-                    )
-            ),*/
+            operationId = "updateUserImage",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -169,13 +164,14 @@ public class UsersController {
                     )},
             tags = "Пользователи"
     )
-    @PatchMapping(path = "{userID}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateUserImage(@Parameter(description = "ИД номер Пользователя") @PathVariable Long userID,
-                                                @Parameter(description = "Путь к файлу") @RequestPart MultipartFile inpPicture) throws IOException {
+    @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateUserImage(
+//            @Parameter(description = "ИД номер Пользователя") @PathVariable Long userID,
+                                                  @Parameter(description = "Путь к файлу") @RequestPart MultipartFile inpPicture) throws IOException {
         if (inpPicture.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().body("File great than 10 Mb!");
         }
-        userService.updateUserAvatar(userID, inpPicture);
+        userService.updateUserAvatar(1L, inpPicture);
         return ResponseEntity.ok().body("File Photo was uploaded successfully");
     }
 }

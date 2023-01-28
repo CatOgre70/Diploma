@@ -80,3 +80,8 @@ create table comment
 alter table ads
     add title text;
 
+-- changeset maxvagan:4
+alter table users add column username varchar(255);
+alter table users add column password varchar(255);
+drop table register_req;
+drop table login_req;

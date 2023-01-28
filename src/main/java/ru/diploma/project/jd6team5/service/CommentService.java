@@ -2,6 +2,7 @@ package ru.diploma.project.jd6team5.service;
 
 import org.springframework.stereotype.Service;
 import ru.diploma.project.jd6team5.dto.CommentDto;
+import ru.diploma.project.jd6team5.dto.ResponseWrapperAds;
 import ru.diploma.project.jd6team5.dto.ResponseWrapperComments;
 import ru.diploma.project.jd6team5.exception.CommentNotFoundException;
 import ru.diploma.project.jd6team5.model.Comment;
@@ -26,12 +27,16 @@ public class CommentService {
     }
 
     public CommentDto addComment(CommentDto dto) {
-        Comment result =  commentRepository.save(mapper.dtoToEntity(dto));
+        Comment result = commentRepository.save(mapper.dtoToEntity(dto));
         return mapper.entityToDto(result);
     }
 
-    public CommentDto findById(long id) {
+    public CommentDto findById(Long adsID, Long id) {
         return mapper.entityToDto(commentRepository.findById(id).orElseThrow(CommentNotFoundException::new));
+    }
+
+    public CommentDto findByIdAndAdsId(Long adsID, Long id) {
+        return mapper.entityToDto(commentRepository.findCommentByIdAndAdsID(id, adsID).orElseThrow(CommentNotFoundException::new));
     }
 
     public CommentDto updateComment(CommentDto dto) {
@@ -45,6 +50,9 @@ public class CommentService {
 
     public ResponseWrapperComments getAllCommentsByAdsId(long id) {
         List<Comment> foundComments = commentRepository.findAllByAdsID(id);
-        return new ResponseWrapperComments(foundComments.size(), foundComments);
+        ResponseWrapperComments response = new ResponseWrapperComments();
+        response.setCount(foundComments.size());
+        response.setResults(foundComments);
+        return response;
     }
 }

@@ -1,12 +1,13 @@
 package ru.diploma.project.jd6team5.model;
 
 import javax.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 @Entity(name = "ads_images")
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AdsImages {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
