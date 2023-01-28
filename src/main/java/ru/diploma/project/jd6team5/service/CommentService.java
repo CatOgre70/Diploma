@@ -30,8 +30,12 @@ public class CommentService {
         return mapper.entityToDto(result);
     }
 
-    public CommentDto findById(long id) {
+    public CommentDto findById(Long adsID, Long id) {
         return mapper.entityToDto(commentRepository.findById(id).orElseThrow(CommentNotFoundException::new));
+    }
+
+    public CommentDto findByIdAndAdsId(Long adsID, Long id) {
+        return mapper.entityToDto(commentRepository.findCommentByIdAndAdsID(id, adsID).orElseThrow(CommentNotFoundException::new));
     }
 
     public CommentDto updateComment(CommentDto dto) {

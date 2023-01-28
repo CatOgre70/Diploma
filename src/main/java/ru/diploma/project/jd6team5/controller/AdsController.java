@@ -230,7 +230,7 @@ public class AdsController {
         }
 
     @Operation(
-            summary = "Изменение данных в Объявлении",
+            summary = "updateAds - Изменение данных в Объявлении",
             operationId = "updateAds",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
@@ -270,21 +270,15 @@ public class AdsController {
     }
 
     @Operation(
-            summary = "Вывод Комментариев у данного Объявления",
+            summary = "getComments - Вывод Комментариев у данного Объявления",
             operationId = "getComments",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Comment.class)
-                    )
-            ),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Ads.class)
+                                    schema = @Schema(implementation = CommentDto.class)
                             )
                     ),
                     @ApiResponse(
@@ -295,8 +289,8 @@ public class AdsController {
             tags = "Объявления"
     )
     @GetMapping("/{adsID}/comment/{commentID}")
-    public ResponseEntity<CommentDto> getComment(@PathVariable Long commentID) {
-        return ResponseEntity.ok(commentService.findById(commentID));
+    public ResponseEntity<CommentDto> getComment(@PathVariable Long adsID, @PathVariable Long commentID) {
+        return ResponseEntity.ok(commentService.findByIdAndAdsId(adsID, commentID));
     }
 
     @Operation(
