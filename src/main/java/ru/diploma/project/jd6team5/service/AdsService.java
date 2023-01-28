@@ -1,6 +1,5 @@
 package ru.diploma.project.jd6team5.service;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,7 +91,10 @@ public class AdsService {
 
     public ResponseWrapperAds getAllAdsById(long id) {
         List<Ads> foundAds = adsRepository.findAllById(id);
-        return new ResponseWrapperAds(foundAds.size(), foundAds);
+        ResponseWrapperAds response = new ResponseWrapperAds();
+        response.setCount(foundAds.size());
+        response.setResults(foundAds);
+        return response;
     }
 
     private Path saveIncomeImage(Long adsID, Long imageID,MultipartFile inpPicture) throws IOException {
