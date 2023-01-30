@@ -6,6 +6,9 @@ import ru.diploma.project.jd6team5.model.Ads;
 import ru.diploma.project.jd6team5.dto.FullAdsDto;
 import ru.diploma.project.jd6team5.service.UserService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class FullAdsMapper {
     private final UserService userService;
@@ -16,28 +19,29 @@ public class FullAdsMapper {
 
     public FullAdsDto entityToDto(Ads ads) {
         User user = userService.getUserByID(ads.getUserID());
-        return new FullAdsDto(ads.getId(),
-                ads.getUserID(),
+        return new FullAdsDto(
                 user.getFirstName(),
                 user.getLastName(),
-                ads.getTitle(),
                 ads.getDescription(),
-                ads.getPrice(),
                 user.getEmail(),
+                new ArrayList<String>(){}, //ads.getImageListID(),
                 user.getPhone(),
-                ads.getCurrency(),
-                ads.getStatus(),
-                ads.getImageListID());
+                ads.getId(),
+                ads.getPrice().intValue(),
+                ads.getTitle()
+        );
     }
 
-    public Ads dtoToEntity(FullAdsDto dto) {
-        return new Ads(dto.getId(),
-                dto.getUserID(),
+    public Ads dtoToEntity(FullAdsDto dto, Long userID) {
+        return new Ads(
+                dto.getPk(),
+                userID,
                 dto.getTitle(),
                 dto.getDescription(),
-                dto.getPrice(),
-                dto.getCurrency(),
-                dto.getStatus(),
-                dto.getImageListID());
+                dto.getPrice().floatValue(),
+                null,
+                null,
+                1L//new ArrayList<String>(){} //dto.getImage()
+        );
     }
 }

@@ -11,15 +11,19 @@ public class AdsMapper {
         return new AdsDto(ads.getUserID(),
                 ads.getImageListID(),
                 ads.getId(),
-                ads.getPrice(),
+                ads.getPrice().intValue(),
                 ads.getTitle());
     }
 
     public Ads dtoToAds(AdsDto dto) {
-        return new Ads(dto.getId(),
-                dto.getUserID(),
+        return new Ads(dto.getPk(),
+                dto.getAuthor(),
                 dto.getTitle(),
-                dto.getPrice(),
-                dto.getImageListID());
+                null,
+                dto.getPrice().floatValue(),
+                null,
+                null,
+                dto.getImage()
+        );
     }
 }

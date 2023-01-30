@@ -25,12 +25,4 @@ public class Ads {
     private AdsStatus status;
     @Column(name = "image_list_id")
     private Long imageListID;
-
-    public Ads(Long id, Long userID, String title, Float price, Long imageListID) {
-        this.id = id;
-        this.userID = userID;
-        this.title = title;
-        this.price = price;
-        this.imageListID = imageListID;
-    }
 }
