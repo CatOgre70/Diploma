@@ -85,3 +85,11 @@ alter table users add column username varchar(255);
 alter table users add column password varchar(255);
 drop table register_req;
 drop table login_req;
+
+--changeset mkachalov:2
+alter table ads
+alter column id type bigint using id::bigint;
+
+--changeset mkachalov:3
+alter table comment
+alter column ads_id type bigint using ads_id::bigint;
