@@ -192,7 +192,7 @@ public class AdsController {
     @PostMapping(path = "/{adsID}/comments")
     public ResponseEntity<CommentDto> addCommentToAds(@PathVariable Long adsID, @RequestBody CommentDto inpComment){
         Long inAdsID = adsService.findFullAds(adsID).getPk();
-        inpComment.setAdsID(inAdsID);
+        inpComment.setAdsId(inAdsID);
         return ResponseEntity.ok(commentService.addComment(inpComment));
     }
     @Operation(

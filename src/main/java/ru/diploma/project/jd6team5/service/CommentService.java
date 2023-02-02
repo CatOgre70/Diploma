@@ -51,8 +51,12 @@ public class CommentService {
     public ResponseWrapperComments getAllCommentsByAdsId(long id) {
         List<Comment> foundComments = commentRepository.findAllByAdsID(id);
         ResponseWrapperComments response = new ResponseWrapperComments();
+        List<CommentDto> dtoList = new ArrayList<>();
+        for(Comment c : foundComments) {
+            dtoList.add(mapper.entityToDto(c));
+        }
         response.setCount(foundComments.size());
-        response.setResults(foundComments);
+        response.setResults(dtoList);
         return response;
     }
 }

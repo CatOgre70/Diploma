@@ -17,6 +17,7 @@ import ru.diploma.project.jd6team5.utils.FullAdsMapper;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
@@ -84,16 +85,24 @@ public class AdsService {
     public ResponseWrapperAds getAllAds() {
         List<Ads> foundAds = adsRepository.findAll();
         ResponseWrapperAds result = new ResponseWrapperAds();
+        List<AdsDto> dtoList = new ArrayList<>();
+        for(Ads a : foundAds) {
+            dtoList.add(compactMapper.entityToDto(a));
+        }
         result.setCount(foundAds.size());
-        result.setResults(foundAds);
+        result.setResults(dtoList);
         return result;
     }
 
     public ResponseWrapperAds getAllAdsById(long id) {
         List<Ads> foundAds = adsRepository.findAllById(id);
         ResponseWrapperAds response = new ResponseWrapperAds();
+        List<AdsDto> dtoList = new ArrayList<>();
+        for(Ads a : foundAds) {
+            dtoList.add(compactMapper.entityToDto(a));
+        }
         response.setCount(foundAds.size());
-        response.setResults(foundAds);
+        response.setResults(dtoList);
         return response;
     }
 

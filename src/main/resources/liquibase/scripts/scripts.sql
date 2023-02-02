@@ -93,3 +93,11 @@ alter column id type bigint using id::bigint;
 --changeset mkachalov:3
 alter table comment
 alter column ads_id type bigint using ads_id::bigint;
+
+--changeset mkachalov:4
+alter table ads
+alter column price type integer using price::integer;
+
+--changeset mkachalov:5
+alter table ads
+alter column price type REAL using price::REAL;
