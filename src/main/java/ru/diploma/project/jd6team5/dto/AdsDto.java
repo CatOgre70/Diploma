@@ -6,9 +6,9 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 public class AdsDto {
-    private Long userID;
-    private Long imageListID;
-    private Long id;
-    private Float price;
+    private int author;
+    private String[] image;
+    private int pk;
+    private int price;
     private String title;
 }

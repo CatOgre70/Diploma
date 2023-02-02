@@ -152,7 +152,10 @@ public class AdsController {
         if (image != null && image.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(adsService.createAds(1L, properties, image));
+
+        // Вот здесь надо разобраться как взять из фронта userId!!!
+
+        return ResponseEntity.ok(adsService.createAds(1, properties, image));
     }
 
     @Operation(

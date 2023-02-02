@@ -17,6 +17,8 @@ import ru.diploma.project.jd6team5.utils.FullAdsMapper;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
@@ -47,21 +49,21 @@ public class AdsService {
         this.adsImgMapper = adsImgMapper;
     }
 
-    public AdsDto createAds(Long userID, CreateAds createAds, MultipartFile inpPicture) throws IOException {
+    public AdsDto createAds(int userID, CreateAds createAds, MultipartFile inpPicture) throws IOException {
         Ads newAds = new Ads();
         newAds.setUserID(userID);
         newAds.setDescription(createAds.getDescription());
         newAds.setPrice(createAds.getPrice());
         newAds.setTitle(createAds.getTitle());
         Ads createdAds = adsRepository.save(newAds);
-        AdsImages imageList = new AdsImages();
-        imageList.setImageID(1L);
-        Path imagePath = saveIncomeImage(createdAds.getId(), 1L, inpPicture);
+        AdsImages image = new AdsImages();
+        image.setAdsId(createdAds.getId());
+        AdsImages createdImage = adsImageRepo.save(image);
+        Path imagePath = saveIncomeImage(createdImage.getId(), createdAds.getId(), inpPicture);
         if (Files.exists(imagePath)){
-            imageList.setImagePath(imagePath.toFile().getParent());
-            AdsImages createdImageList = adsImageRepo.save(imageList);
-            createdAds.setImageListID(createdImageList.getId());
-            return compactMapper.entityToDto(adsRepository.save(createdAds));
+            createdImage.setImagePath(imagePath.toFile().getParent());
+            createdImage = adsImageRepo.save(createdImage);
+            return compactMapper.entityToDto(createdAds);
         } else { throw new ImageFileNotFoundException("Файл с картинкой Объявления не сохранился"); }
     }
 
@@ -83,22 +85,36 @@ public class AdsService {
 
     public ResponseWrapperAds getAllAds() {
         List<Ads> foundAds = adsRepository.findAll();
+        List<AdsDto> foundAdsDto = new ArrayList<>(foundAds.size());
+        for (Ads a : foundAds) {
+            foundAdsDto.add(compactMapper.entityToDto(a));
+        }
         ResponseWrapperAds result = new ResponseWrapperAds();
         result.setCount(foundAds.size());
-        result.setResults(foundAds);
+        result.setResults(foundAdsDto);
         return result;
     }
 
+
     public ResponseWrapperAds getAllAdsById(long id) {
         List<Ads> foundAds = adsRepository.findAllById(id);
+        List<AdsDto> foundAdsDto;
+        if(foundAds.isEmpty()) {
+            foundAdsDto = Collections.emptyList();
+        } else {
+            foundAdsDto = new ArrayList<>(foundAds.size());
+            for (Ads a : foundAds) {
+                foundAdsDto.add(compactMapper.entityToDto(a));
+            }
+        }
         ResponseWrapperAds response = new ResponseWrapperAds();
         response.setCount(foundAds.size());
-        response.setResults(foundAds);
+        response.setResults(foundAdsDto);
         return response;
     }
 
-    private Path saveIncomeImage(Long adsID, Long imageID,MultipartFile inpPicture) throws IOException {
-        Path imagePath = Path.of(targetImagesDir + "/image_" + adsID + "_" + imageID +
+    private Path saveIncomeImage(Long id, int adsID, MultipartFile inpPicture) throws IOException {
+        Path imagePath = Path.of(targetImagesDir + "/image_" + adsID + "_" + id +
                 getExtensionOfFile(inpPicture.getOriginalFilename()));
         Files.createDirectories(imagePath.getParent());
         Files.deleteIfExists(imagePath);

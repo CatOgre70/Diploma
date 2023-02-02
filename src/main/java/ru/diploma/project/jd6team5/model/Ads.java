@@ -13,24 +13,21 @@ import ru.diploma.project.jd6team5.constants.CurrencyCode;
 public class Ads {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     @Column(name = "user_id")
-    private Long userID;
+    private int userID;
     private String title;
     private String description;
-    private Float price;
+    private int price;
     @Enumerated(EnumType.STRING)
     private CurrencyCode currency;
     @Enumerated(EnumType.STRING)
     private AdsStatus status;
-    @Column(name = "image_list_id")
-    private Long imageListID;
 
-    public Ads(Long id, Long userID, String title, Float price, Long imageListID) {
+    public Ads(int id, int userID, String title, int price, Long imageListID) {
         this.id = id;
         this.userID = userID;
         this.title = title;
         this.price = price;
-        this.imageListID = imageListID;
     }
 }
