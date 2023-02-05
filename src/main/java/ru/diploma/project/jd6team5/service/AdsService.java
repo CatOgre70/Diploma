@@ -132,16 +132,17 @@ public class AdsService {
 
     public List<String> updateAndGetListImages(Long adsId, MultipartFile inpPicture) throws IOException {
         Ads adsFound = adsRepository.findById(adsId).orElseThrow(AdsNotFoundException::new);
-        List<AdsImage> imageList = adsImageRepo.getAllImagesByAdsId(adsFound.getId());
+        List<AdsImage> imageList = adsImageRepo.findAdsImageByAdsId(adsFound.getId());
+        AdsImage adsImage;
+        if (imageList.isEmpty()) {
+            adsImage = new AdsImage();
+            adsImage.setAdsId(adsId);
+            adsImage = adsImageRepo.save(adsImage);
+            imageList = new ArrayList<>(List.of(adsImage));
+
+        }
         Path imagePath = saveIncomeImage(imageList.get(0).getId(), adsId, inpPicture); // Вот тут надо думать над списком картинок, как и куда добавлять новую, как управлять списком!
         if (Files.exists(imagePath)){
-            AdsImage adsImage;
-            if (imageList.isEmpty()) {
-                adsImage = new AdsImage();
-                adsImage.setId(1L);
-                imageList = new ArrayList<>(List.of(adsImage));
-
-            }
             adsImage = imageList.get(0);
             adsImage.setAdsId(adsId);
             adsImage.setImagePath(imagePath.toFile().getPath());

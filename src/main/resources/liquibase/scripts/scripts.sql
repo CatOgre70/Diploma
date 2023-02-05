@@ -93,3 +93,6 @@ alter table ads_images
 -- changeset vasilydemin:2
 alter table ads_images
     rename column ids_id to ads_id;
+
+-- changeset vasilydemin:3
+alter table ads drop column image_list_id;

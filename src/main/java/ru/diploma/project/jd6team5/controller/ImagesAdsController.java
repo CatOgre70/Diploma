@@ -42,7 +42,7 @@ public class ImagesAdsController {
                             description = "Данные записаны!",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = AdsImagesDto.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = String.class))
                             )
                     ),
                     @ApiResponse(

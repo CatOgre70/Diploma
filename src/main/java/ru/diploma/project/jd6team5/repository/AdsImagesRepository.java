@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AdsImagesRepository extends JpaRepository<AdsImage, Long> {
-    List<AdsImage> getAllImagesByAdsId(Long adsId);
+    List<AdsImage> findAdsImageByAdsId(Long adsId);
 }

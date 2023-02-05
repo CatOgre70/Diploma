@@ -23,11 +23,11 @@ public class AdsMapper {
 
     public AdsDto entityToDto (Ads ads) {
         AdsDto adsDto = new AdsDto();
-        adsDto.setPk(ads.getUserID().intValue());
+        adsDto.setPk(ads.getId().intValue());
         adsDto.setAuthor(ads.getUserID().intValue());
         adsDto.setTitle(ads.getTitle());
         adsDto.setPrice(adsDto.getPrice());
-        List<AdsImage> adsImages = adsImagesRepository.getAllImagesByAdsId(ads.getId());
+        List<AdsImage> adsImages = adsImagesRepository.findAdsImageByAdsId(ads.getId());
         String[] imagesList = new String[0];
         if(!adsImages.isEmpty()) {
             imagesList = new String[adsImages.size()];
@@ -44,7 +44,7 @@ public class AdsMapper {
         ads.setId((long) dto.getPk());
         ads.setPrice((float) dto.getPrice());
         ads.setTitle(dto.getTitle());
-        List<AdsImage> adsImages = adsImagesRepository.getAllImagesByAdsId((long) dto.getPk());
+        List<AdsImage> adsImages = adsImagesRepository.findAdsImageByAdsId((long) dto.getPk());
         if(adsImages.size() != dto.getImage().length) {
             logger.error("Images lists in AdsDto and Ads are not equals");
             throw new RuntimeException("Images lists in AdsDto and Ads are not equals");
