@@ -9,6 +9,7 @@ import ru.diploma.project.jd6team5.model.AdsImage;
 import ru.diploma.project.jd6team5.repository.AdsImagesRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class AdsMapper {
@@ -26,15 +27,9 @@ public class AdsMapper {
         adsDto.setPk(ads.getId().intValue());
         adsDto.setAuthor(ads.getUserID().intValue());
         adsDto.setTitle(ads.getTitle());
-        adsDto.setPrice(adsDto.getPrice());
+        adsDto.setPrice(ads.getPrice().intValue());
         List<AdsImage> adsImages = adsImagesRepository.findAdsImageByAdsId(ads.getId());
-        String[] imagesList = new String[0];
-        if(!adsImages.isEmpty()) {
-            imagesList = new String[adsImages.size()];
-            for (int i = 0; i < imagesList.length; i++) {
-                imagesList[i] = adsImages.get(i).getImagePath();
-            }
-        }
+        List<String> imagesList = adsImages.stream().map(AdsImage::getImagePath).toList();
         adsDto.setImage(imagesList);
         return adsDto;
     }
@@ -45,12 +40,12 @@ public class AdsMapper {
         ads.setPrice((float) dto.getPrice());
         ads.setTitle(dto.getTitle());
         List<AdsImage> adsImages = adsImagesRepository.findAdsImageByAdsId((long) dto.getPk());
-        if(adsImages.size() != dto.getImage().length) {
+        if(adsImages.size() != dto.getImage().size()) {
             logger.error("Images lists in AdsDto and Ads are not equals");
             throw new RuntimeException("Images lists in AdsDto and Ads are not equals");
         }
-        for(int i = 0; i < dto.getImage().length; i++) {
-            if(!adsImages.get(i).equals(dto.getImage()[i])) {
+        for(int i = 0; i < dto.getImage().size(); i++) {
+            if(!adsImages.get(i).equals(dto.getImage().get(i))) {
                 logger.error("Images lists in AdsDto and Ads are not equals");
                 throw new RuntimeException("Images lists in AdsDto and Ads are not equals");
             }

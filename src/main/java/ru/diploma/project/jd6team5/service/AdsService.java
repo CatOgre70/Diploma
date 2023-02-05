@@ -114,6 +114,23 @@ public class AdsService {
         return response;
     }
 
+    public ResponseWrapperAds getAllAdsByUserId(Long userID) {
+        List<Ads> foundAds = adsRepository.findAllByUserID(userID);
+        List<AdsDto> foundAdsDto;
+        if(foundAds.isEmpty()) {
+            foundAdsDto = Collections.emptyList();
+        } else {
+            foundAdsDto = new ArrayList<>(foundAds.size());
+            for (Ads a : foundAds) {
+                foundAdsDto.add(compactMapper.entityToDto(a));
+            }
+        }
+        ResponseWrapperAds response = new ResponseWrapperAds();
+        response.setCount(foundAds.size());
+        response.setResults(foundAdsDto);
+        return response;
+    }
+
     private Path saveIncomeImage(Long id, Long adsId, MultipartFile inpPicture) throws IOException {
         Path imagePath = Path.of(targetImagesDir + "/image_" + adsId + "_" + id +
                 getExtensionOfFile(inpPicture.getOriginalFilename()));

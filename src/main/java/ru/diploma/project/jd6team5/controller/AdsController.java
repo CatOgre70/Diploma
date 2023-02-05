@@ -196,8 +196,7 @@ public class AdsController {
     @PostMapping(path = "/{adsID}/comments")
     public ResponseEntity<CommentDto> addCommentToAds(@PathVariable Long adsID, @RequestBody CommentDto inpComment){
         Long inAdsID = adsService.findFullAds(adsID).getPk();
-        inpComment.setAdsId(inAdsID);
-        return ResponseEntity.ok(commentService.addComment(inpComment));
+        return ResponseEntity.ok(commentService.addComment(inAdsID, inpComment));
     }
     @Operation(
             summary = "Удаление Объявления",
@@ -293,20 +292,11 @@ public class AdsController {
     @Operation(
             summary = "Удаление Комментариев у данного Объявления",
             operationId = "deleteComments",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Comment.class)
-                    )
-            ),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "OK",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Comment.class)
-                            )
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
                     ),
                     @ApiResponse(
                             responseCode = "401",
@@ -326,9 +316,10 @@ public class AdsController {
             tags = "Объявления"
     )
     @DeleteMapping("/{adsID}/comment/{commentID}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long commentID) {
-        commentService.deleteComment(commentID);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> deleteComment(@PathVariable Long adsID,
+                                           @PathVariable Long commentID) {
+        commentService.deleteComment(adsID, commentID);
+        return ResponseEntity.ok().body("Комментарий удалён");
     }
     @Operation(
             summary = "Обновление Комментария у данного Объявления",
@@ -336,7 +327,7 @@ public class AdsController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Comment.class)
+                            schema = @Schema(implementation = CommentDto.class)
                     )
             ),
             responses = {
@@ -366,15 +357,46 @@ public class AdsController {
             tags = "Объявления"
     )
     @PatchMapping("/{adsID}/comment/{commentID}")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable Long commentID, @RequestBody CommentDto dto) {
-        return ResponseEntity.ok(commentService.updateComment(dto));
+    public ResponseEntity<CommentDto> updateComment(@PathVariable Long adsID,
+                                                    @PathVariable Long commentID,
+                                                    @RequestBody CommentDto dto) {
+        return ResponseEntity.ok(commentService.updateComment(adsID, commentID, dto));
     }
 
+    @Operation(
+            summary = "getALLAds - Все Объявления данного Пользователя",
+            operationId = "getAdsMeUsingGET",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = ResponseWrapperAds.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    )
+            }, tags = "Объявления"
+    )
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapperAds> getAdsMe() {
-        ResponseWrapperAds response = new ResponseWrapperAds();
-        response.setCount(0);
-        response.setResults(Collections.EMPTY_LIST);
+        //TODO: Получить параметры Аутентификации Пользователя и вычислить по его Логину ИД номер
+        // Пока это константа
+        ResponseWrapperAds response = adsService.getAllAdsByUserId(1L);
         return ResponseEntity.ok(response);
     }
 }

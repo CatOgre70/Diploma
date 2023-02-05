@@ -57,12 +57,12 @@ public class WebSecurityConfig {
         return new InMemoryUserDetailsManager(user);
     }
 
-    @Bean
+    /*@Bean
     protected JdbcUserDetailsManager userDbDetailsService() {
         JdbcUserDetailsManager jdbcUserDM = new JdbcUserDetailsManager();
         jdbcUserDM.setDataSource(getDataSource());
         return jdbcUserDM;
-    }
+    }*/
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

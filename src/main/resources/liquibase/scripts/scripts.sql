@@ -112,3 +112,8 @@ alter table ads_images
 
 -- changeset vasilydemin:3
 alter table ads drop column image_list_id;
+
+-- changeset maxvagan:5
+alter table ads drop column currency;
+alter table ads drop column status;
+alter table ads drop column label;

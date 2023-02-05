@@ -19,10 +19,10 @@ public class Ads {
     private String title;
     private String description;
     private Float price;
-    @Enumerated(EnumType.STRING)
+    /*@Enumerated(EnumType.STRING)
     private CurrencyCode currency;
     @Enumerated(EnumType.STRING)
-    private AdsStatus status;
+    private AdsStatus status;*/
 
     public Ads(Long id, Long userID, String title, Float price) {
         this.id = id;

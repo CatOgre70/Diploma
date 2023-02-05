@@ -9,7 +9,6 @@ public class CommentMapper {
 
     public CommentDto entityToDto(Comment comment) {
         return new CommentDto(comment.getUserID(),
-                comment.getAdsID(),
                 comment.getCreateDate(),
                 comment.getId(),
                 comment.getCommentText());
@@ -18,7 +17,7 @@ public class CommentMapper {
     public Comment dtoToEntity(CommentDto dto) {
         return new Comment(dto.getPk(),
                 dto.getAuthor(),
-                dto.getAdsId(),
+                null,
                 dto.getText(),
                 dto.getCreatedAt());
     }

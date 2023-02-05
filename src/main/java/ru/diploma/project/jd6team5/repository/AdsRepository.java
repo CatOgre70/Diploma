@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface AdsRepository extends JpaRepository<Ads, Long> {
     List<Ads> findAllById(Long id);
+
+    List<Ads> findAllByUserID(Long userID);
 }
