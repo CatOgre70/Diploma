@@ -366,8 +366,29 @@ public class AdsController {
         return ResponseEntity.ok(commentService.updateComment(dto));
     }
 
-    /*@GetMapping("/me")   Тут надо достать id'шник свой из сессии. Я пока не умею))
-    public ResponseEntity<ResponseWrapperAds> getAdsMe() {
-        return ResponseEntity.ok();
+    /*@Operation(
+            summary = "Всe Объявления текущего Пользователя",
+            operationId = "getAds",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = Ads.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    )
+            }, tags = "Объявления"
+    )
+    @GetMapping("/me")
+    public ResponseEntity<FullAdsDto> getAds(@RequestPart Boolean authenticated,
+                                             @RequestPart Boolean ,
+                                             @RequestPart Boolean authenticated,) {
+        return ResponseEntity.ok(adsService.findFullAds(adsID));
     }*/
 }
