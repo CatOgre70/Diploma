@@ -25,6 +25,5 @@ public class FullAdsDto {
     private String phone;
     private CurrencyCode currency;
     private AdsStatus status;
-    private Long imageListID;
 
 }

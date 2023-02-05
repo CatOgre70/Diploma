@@ -85,3 +85,11 @@ alter table users add column username varchar(255);
 alter table users add column password varchar(255);
 drop table register_req;
 drop table login_req;
+
+-- changeset vasilydemin:1
+alter table ads_images
+    rename column image_id to ids_id;
+
+-- changeset vasilydemin:2
+alter table ads_images
+    rename column ids_id to ads_id;

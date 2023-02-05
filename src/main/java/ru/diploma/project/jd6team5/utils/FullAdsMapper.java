@@ -15,29 +15,27 @@ public class FullAdsMapper {
     }
 
     public FullAdsDto entityToDto(Ads ads) {
-        User user = userService.getUserByID(ads.getUserID());
-        return new FullAdsDto(ads.getId(),
-                ads.getUserID(),
+        User user = userService.getUserByID((long) ads.getUserID());
+        return new FullAdsDto((long) ads.getId(),
+                (long) ads.getUserID(),
                 user.getFirstName(),
                 user.getLastName(),
                 ads.getTitle(),
                 ads.getDescription(),
-                ads.getPrice(),
+                (float) ads.getPrice(),
                 user.getEmail(),
                 user.getPhone(),
                 ads.getCurrency(),
-                ads.getStatus(),
-                ads.getImageListID());
+                ads.getStatus());
     }
 
     public Ads dtoToEntity(FullAdsDto dto) {
-        return new Ads(dto.getId(),
+        return new Ads((dto.getId()),
                 dto.getUserID(),
                 dto.getTitle(),
                 dto.getDescription(),
                 dto.getPrice(),
                 dto.getCurrency(),
-                dto.getStatus(),
-                dto.getImageListID());
+                dto.getStatus());
     }
 }
