@@ -6,6 +6,7 @@ import ru.diploma.project.jd6team5.constants.CurrencyCode;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,17 +15,13 @@ public class FullAdsDto {
 
     public interface UpdateByUser {
     }
-    private Long id;
-    private Long userID;
     private String authorFirstName;
     private String authorLastName;
-    private String title;
     private String description;
-    private Float price;
     private String email;
+    private List<String> image;
     private String phone;
-    private CurrencyCode currency;
-    private AdsStatus status;
-    private Long imageListID;
-
+    private Long pk;
+    private Integer price;
+    private String title;
 }

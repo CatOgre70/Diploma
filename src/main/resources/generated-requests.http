@@ -53,14 +53,14 @@ Authorization: Basic user password
 }
 
 ###
-GET http://localhost:8080/users/1
+GET http://localhost:8080/users/me
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic user@gmail.com password
 
 ###
 GET http://localhost:8080/ads
 Content-Type: application/json
-Authorization: Basic user password
+Authorization: Basic maximv@mail.ru 79513
 
 
 ###
@@ -77,6 +77,7 @@ Authorization: Basic user password
 POST http://localhost:8080/ads
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
+
 --WebAppBoundary
 Content-Disposition: form-data; name="properties"
 Content-Type: application/json
@@ -92,9 +93,7 @@ Content-Disposition: form-data; name="image"; filename="image_source.jpg"
 Content-Type: application/octet-stream
 
 < ./static/ads_images/image_source.jpg
---WebAppBoundary--
 
 ###
 GET http://localhost:8080/ads
 Content-Type: application/json
-Authorization: Basic user password

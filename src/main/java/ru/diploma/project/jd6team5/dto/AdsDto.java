@@ -2,13 +2,15 @@ package ru.diploma.project.jd6team5.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class AdsDto {
-    private Long userID;
-    private Long imageListID;
-    private Long id;
-    private Float price;
+    private Integer author;
+    private List<String> image;
+    private Integer pk;
+    private int price;
     private String title;
 }

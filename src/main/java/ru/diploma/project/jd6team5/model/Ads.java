@@ -19,18 +19,15 @@ public class Ads {
     private String title;
     private String description;
     private Float price;
-    @Enumerated(EnumType.STRING)
+    /*@Enumerated(EnumType.STRING)
     private CurrencyCode currency;
     @Enumerated(EnumType.STRING)
-    private AdsStatus status;
-    @Column(name = "image_list_id")
-    private Long imageListID;
+    private AdsStatus status;*/
 
-    public Ads(Long id, Long userID, String title, Float price, Long imageListID) {
+    public Ads(Long id, Long userID, String title, Float price) {
         this.id = id;
         this.userID = userID;
         this.title = title;
         this.price = price;
-        this.imageListID = imageListID;
     }
 }

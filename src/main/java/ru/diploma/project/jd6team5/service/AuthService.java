@@ -26,13 +26,18 @@ public class AuthService {
     }
 
     public boolean login(String userName, String password) {
-        if (!userDM.userExists(userName)) {
+        ru.diploma.project.jd6team5.model.User dbUser = userRepo.getUserByUsername(userName).orElse(null);
+        password = password == null ? "EMPTY" : password;
+        String encryptPwd; String encryptPwdWithoutType;
+        if (!userDM.userExists(userName) && dbUser == null) {
             return false;
+        } else if (userDM.userExists(userName)){
+            UserDetails userD = userDM.loadUserByUsername(userName);
+            encryptPwd = userD.getPassword();
+            encryptPwdWithoutType = encryptPwd.substring(8);
+        } else {
+            encryptPwdWithoutType = dbUser.getPassword();
         }
-        UserDetails userD = userDM.loadUserByUsername(userName);
-        String encryptPwd = userD.getPassword();
-        String encryptPwdWithoutType = encryptPwd.substring(8);
-//        return passEnc.matches(encryptPwd, encryptPwdWithoutType);
         return passEnc.matches(password, encryptPwdWithoutType);
     }
 
@@ -55,7 +60,9 @@ public class AuthService {
         userInst.setFirstName(registerReq.getFirstName());
         userInst.setLastName(registerReq.getLastName());
         userInst.setUsername(registerReq.getUsername());
-        userInst.setPassword(registerReq.getUsername());
+        String encpass = passEnc.encode(registerReq.getPassword());
+//        String encpass = registerReq.getPassword();
+        userInst.setPassword(encpass);
         userInst.setUserID(nextUserID);
         userRepo.save(userInst);
         return true;

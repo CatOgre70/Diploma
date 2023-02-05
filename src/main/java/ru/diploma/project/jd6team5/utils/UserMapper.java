@@ -1,6 +1,7 @@
 package ru.diploma.project.jd6team5.utils;
 
 import org.springframework.stereotype.Component;
+import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.dto.UserDto;
 import ru.diploma.project.jd6team5.model.User;
 
@@ -8,28 +9,29 @@ import ru.diploma.project.jd6team5.model.User;
 public class UserMapper {
 
     public UserDto entityToDto (User user) {
-        return new UserDto(user.getUserID(),
+        return new UserDto(
                 user.getEmail(),
                 user.getFirstName(),
+                user.getUserID(),
                 user.getLastName(),
-                user.getUsername(),
-                user.getPassword(),
                 user.getPhone(),
-				user.getRole(),
-				user.getAvatarPath(),
-				user.getRegDate());
+                user.getRegDate(),
+                "Город", //TODO: user.getCity(),
+                user.getAvatarPath()
+        );
     }
 
     public User dtoToUser(UserDto dto) {
-        return new User(dto.getUserID(),
+        return new User(dto.getId(),
                 dto.getEmail(),
                 dto.getFirstName(),
                 dto.getLastName(),
-                dto.getUsername(),
-                dto.getPassword(),
+                dto.getEmail(), //TODO: что-то ещё
+                null, //TODO: как-то заполнять пароль
                 dto.getPhone(),
-				dto.getRole(),
-				dto.getAvatarPath(),
-				dto.getRegDate());
+                UserRole.USER,
+                dto.getImage(),
+                dto.getRegDate()
+                );
     }
 }

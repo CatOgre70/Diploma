@@ -1,10 +1,13 @@
 package ru.diploma.project.jd6team5.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.NewPassword;
 import ru.diploma.project.jd6team5.dto.UserDto;
+import ru.diploma.project.jd6team5.exception.BadPasswordException;
 import ru.diploma.project.jd6team5.exception.ImageFileNotFoundException;
 import ru.diploma.project.jd6team5.exception.NewPasswordAlreadyUsedException;
 import ru.diploma.project.jd6team5.exception.UserNotFoundException;
@@ -27,11 +30,13 @@ public class UserService {
     private final UserMapper userMapper;
     @Value("${users.avatars.dir.path}")
     private String targetAvatarDir;
+    private final PasswordEncoder passEnc;
     /** Конструктор */
     public UserService(UserRepository userRepo,
                        UserMapper userMapper) {
         this.userRepo = userRepo;
         this.userMapper = userMapper;
+        this.passEnc = new BCryptPasswordEncoder();
     }
 
     /**
@@ -77,22 +82,26 @@ public class UserService {
      */
     public UserDto updatePassword(Long userID, NewPassword newPassword){
         User userFound = getUserByID(userID);
-        if (newPassword.getNewPassword().equals(userFound.getPassword())){
+        String currPass = newPassword.getCurrentPassword() == null ? "EMPTY" : newPassword.getCurrentPassword();
+        if (newPassword.getNewPassword() == null){
+            throw new BadPasswordException("пароль не может быть пустым!");
+        } else if (newPassword.getNewPassword().equals(newPassword.getCurrentPassword())){
             throw new NewPasswordAlreadyUsedException("Пароль совпадает с текущим");
+        } else if (!passEnc.matches(currPass, userFound.getPassword())){
+            throw new BadPasswordException("Неверно введён текущий пароль!");
         }
-        userFound.setPassword(newPassword.getNewPassword());
+        userFound.setPassword(passEnc.encode(newPassword.getNewPassword()));
         return userMapper.entityToDto(userRepo.save(userFound));
     }
 
     public UserDto updateUser(UserDto inpUserDto) {
-        User userFound = getUserByID(inpUserDto.getUserID());
+        User userFound = getUserByID(inpUserDto.getId());
         userFound.setEmail(inpUserDto.getEmail());
-        userFound.setAvatarPath(inpUserDto.getAvatarPath());
+        userFound.setAvatarPath(inpUserDto.getImage());
         userFound.setFirstName(inpUserDto.getFirstName());
         userFound.setLastName(inpUserDto.getLastName());
         userFound.setPhone(inpUserDto.getPhone());
         userFound.setRegDate(inpUserDto.getRegDate());
-        userFound.setRole(inpUserDto.getRole());
         userRepo.save(userFound);
         return userMapper.entityToDto(userFound);
     }

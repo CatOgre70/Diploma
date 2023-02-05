@@ -15,6 +15,7 @@ import ru.diploma.project.jd6team5.dto.UserDto;
 import ru.diploma.project.jd6team5.service.AdsService;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/image")
@@ -41,7 +42,7 @@ public class ImagesAdsController {
                             description = "Данные записаны!",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = AdsImagesDto.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = String.class))
                             )
                     ),
                     @ApiResponse(
@@ -52,14 +53,9 @@ public class ImagesAdsController {
             tags = "Изображения"
     )
     @PatchMapping(path = "/{adsID}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdsImagesDto> updateAdsImages(@Parameter(description = "ИД номер Объявлении") @PathVariable Long adsID,
-                                                       @Parameter(description = "Путь к файлу") @RequestPart MultipartFile inpPicture)
+    public ResponseEntity<List<String>> updateAdsImages(@Parameter(description = "ИД номер Объявлении") @PathVariable Long adsID,
+                                                        @Parameter(description = "Путь к файлу") @RequestPart MultipartFile inpPicture)
             throws IOException {
-        AdsImagesDto resultEntity = adsService.updateAndGetListImages(adsID, inpPicture);
-        if (resultEntity != null) {
-            return ResponseEntity.ok(resultEntity);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(adsService.updateAndGetListImages(adsID, inpPicture));
     }
 }

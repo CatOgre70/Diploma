@@ -26,8 +26,10 @@ public class CommentService {
         this.mapper = mapper;
     }
 
-    public CommentDto addComment(CommentDto dto) {
-        Comment result = commentRepository.save(mapper.dtoToEntity(dto));
+    public CommentDto addComment(Long adsID, CommentDto dto) {
+        Comment newComment = mapper.dtoToEntity(dto);
+        newComment.setAdsID(adsID);
+        Comment result = commentRepository.save(newComment);
         return mapper.entityToDto(result);
     }
 
@@ -39,20 +41,29 @@ public class CommentService {
         return mapper.entityToDto(commentRepository.findCommentByIdAndAdsID(id, adsID).orElseThrow(CommentNotFoundException::new));
     }
 
-    public CommentDto updateComment(CommentDto dto) {
-        Comment result =  commentRepository.save(mapper.dtoToEntity(dto));
+    public CommentDto updateComment(Long adsID, Long commentID, CommentDto dto) {
+        Comment foundComment = commentRepository.findCommentByIdAndAdsID(commentID, adsID).orElseThrow(CommentNotFoundException::new);
+        foundComment.setCreateDate(dto.getCreatedAt());
+        foundComment.setCommentText(dto.getText());
+        foundComment.setUserID(dto.getAuthor());
+        Comment result = commentRepository.save(foundComment);
         return mapper.entityToDto(result);
     }
-    public void deleteComment(long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(CommentNotFoundException::new);
+
+    public void deleteComment(Long adsId, Long commentId) {
+        Comment comment = commentRepository.findCommentByIdAndAdsID(commentId, adsId).orElseThrow(CommentNotFoundException::new);
         commentRepository.delete(comment);
     }
 
     public ResponseWrapperComments getAllCommentsByAdsId(long id) {
         List<Comment> foundComments = commentRepository.findAllByAdsID(id);
         ResponseWrapperComments response = new ResponseWrapperComments();
+        List<CommentDto> dtoList = new ArrayList<>();
+        for(Comment c : foundComments) {
+            dtoList.add(mapper.entityToDto(c));
+        }
         response.setCount(foundComments.size());
-        response.setResults(foundComments);
+        response.setResults(dtoList);
         return response;
     }
 }

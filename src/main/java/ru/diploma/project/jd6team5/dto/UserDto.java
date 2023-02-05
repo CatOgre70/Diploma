@@ -9,14 +9,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private Long userID;
     private String email;
     private String firstName;
+    private Long id;
     private String lastName;
-    private String username;
-    private String password;
     private String phone;
-    private UserRole role;
-    private String avatarPath;
     private LocalDateTime regDate;
+    private String city;
+    private String image;
 }

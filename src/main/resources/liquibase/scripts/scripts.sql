@@ -85,3 +85,35 @@ alter table users add column username varchar(255);
 alter table users add column password varchar(255);
 drop table register_req;
 drop table login_req;
+
+--changeset mkachalov:2
+alter table ads
+alter column id type bigint using id::bigint;
+
+--changeset mkachalov:3
+alter table comment
+alter column ads_id type bigint using ads_id::bigint;
+
+--changeset mkachalov:4
+alter table ads
+alter column price type integer using price::integer;
+
+--changeset mkachalov:5
+alter table ads
+alter column price type REAL using price::REAL;
+
+-- changeset vasilydemin:1
+alter table ads_images
+    rename column image_id to ids_id;
+
+-- changeset vasilydemin:2
+alter table ads_images
+    rename column ids_id to ads_id;
+
+-- changeset vasilydemin:3
+alter table ads drop column image_list_id;
+
+-- changeset maxvagan:5
+alter table ads drop column currency;
+alter table ads drop column status;
+alter table ads drop column label;
