@@ -6,9 +6,9 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 public class AdsDto {
-    private Long author;
-    private Long image;
-    private Long pk;
-    private Integer price;
+    private Integer author;
+    private String[] image;
+    private Integer pk;
+    private int price;
     private String title;
 }

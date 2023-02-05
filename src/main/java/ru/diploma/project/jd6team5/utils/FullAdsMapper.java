@@ -27,7 +27,7 @@ public class FullAdsMapper {
                 new ArrayList<String>(){}, //ads.getImageListID(),
                 user.getPhone(),
                 ads.getId(),
-                ads.getPrice().intValue(),
+                Math.round(ads.getPrice()),
                 ads.getTitle()
         );
     }
@@ -38,7 +38,7 @@ public class FullAdsMapper {
                 userID,
                 dto.getTitle(),
                 dto.getDescription(),
-                dto.getPrice().floatValue(),
+                dto.getPrice(),
                 null,
                 null,
                 1L//new ArrayList<String>(){} //dto.getImage()

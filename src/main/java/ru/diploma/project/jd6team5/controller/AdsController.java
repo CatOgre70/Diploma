@@ -17,6 +17,7 @@ import ru.diploma.project.jd6team5.service.AdsService;
 import ru.diploma.project.jd6team5.service.CommentService;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @RestController
 @RequestMapping(path = "/ads")
@@ -366,29 +367,11 @@ public class AdsController {
         return ResponseEntity.ok(commentService.updateComment(dto));
     }
 
-    /*@Operation(
-            summary = "Всe Объявления текущего Пользователя",
-            operationId = "getAds",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "OK",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = Ads.class))
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Not Found",
-                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
-                    )
-            }, tags = "Объявления"
-    )
     @GetMapping("/me")
-    public ResponseEntity<FullAdsDto> getAds(@RequestPart Boolean authenticated,
-                                             @RequestPart Boolean ,
-                                             @RequestPart Boolean authenticated,) {
-        return ResponseEntity.ok(adsService.findFullAds(adsID));
-    }*/
+    public ResponseEntity<ResponseWrapperAds> getAdsMe() {
+        ResponseWrapperAds response = new ResponseWrapperAds();
+        response.setCount(0);
+        response.setResults(Collections.EMPTY_LIST);
+        return ResponseEntity.ok(response);
+    }
 }

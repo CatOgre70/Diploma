@@ -13,13 +13,12 @@ import ru.diploma.project.jd6team5.constants.CurrencyCode;
 public class Ads {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
     @Column(name = "user_id")
     private Long userID;
     private String title;
     private String description;
-    private Float price;
+    private float price;
     @Enumerated(EnumType.STRING)
     private CurrencyCode currency;
     @Enumerated(EnumType.STRING)

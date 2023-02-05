@@ -18,6 +18,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
@@ -55,14 +56,14 @@ public class AdsService {
         newAds.setPrice(createAds.getPrice());
         newAds.setTitle(createAds.getTitle());
         Ads createdAds = adsRepository.save(newAds);
-        AdsImages imageList = new AdsImages();
-        imageList.setImageID(1L);
-        Path imagePath = saveIncomeImage(createdAds.getId(), 1L, inpPicture);
+        AdsImages image = new AdsImages();
+        image.setAdsId(createdAds.getId());
+        AdsImages createdImage = adsImageRepo.save(image);
+        Path imagePath = saveIncomeImage(createdImage.getId(), createdAds.getId(), inpPicture);
         if (Files.exists(imagePath)){
-            imageList.setImagePath(imagePath.toFile().getParent());
-            AdsImages createdImageList = adsImageRepo.save(imageList);
-            createdAds.setImageListID(createdImageList.getId());
-            return compactMapper.entityToDto(adsRepository.save(createdAds));
+            createdImage.setImagePath(imagePath.toFile().getParent());
+            createdImage = adsImageRepo.save(createdImage);
+            return compactMapper.entityToDto(createdAds);
         } else { throw new ImageFileNotFoundException("Файл с картинкой Объявления не сохранился"); }
     }
 
@@ -84,25 +85,30 @@ public class AdsService {
 
     public ResponseWrapperAds getAllAds() {
         List<Ads> foundAds = adsRepository.findAll();
-        ResponseWrapperAds result = new ResponseWrapperAds();
-        List<AdsDto> dtoList = new ArrayList<>();
-        for(Ads a : foundAds) {
-            dtoList.add(compactMapper.entityToDto(a));
+        List<AdsDto> foundAdsDto = new ArrayList<>(foundAds.size());
+        for (Ads a : foundAds) {
+            foundAdsDto.add(compactMapper.entityToDto(a));
         }
+        ResponseWrapperAds result = new ResponseWrapperAds();
         result.setCount(foundAds.size());
-        result.setResults(dtoList);
+        result.setResults(foundAdsDto);
         return result;
     }
 
     public ResponseWrapperAds getAllAdsById(long id) {
         List<Ads> foundAds = adsRepository.findAllById(id);
-        ResponseWrapperAds response = new ResponseWrapperAds();
-        List<AdsDto> dtoList = new ArrayList<>();
-        for(Ads a : foundAds) {
-            dtoList.add(compactMapper.entityToDto(a));
+        List<AdsDto> foundAdsDto;
+        if(foundAds.isEmpty()) {
+            foundAdsDto = Collections.emptyList();
+        } else {
+            foundAdsDto = new ArrayList<>(foundAds.size());
+            for (Ads a : foundAds) {
+                foundAdsDto.add(compactMapper.entityToDto(a));
+            }
         }
+        ResponseWrapperAds response = new ResponseWrapperAds();
         response.setCount(foundAds.size());
-        response.setResults(dtoList);
+        response.setResults(foundAdsDto);
         return response;
     }
 
@@ -128,7 +134,7 @@ public class AdsService {
         Path imagePath = saveIncomeImage(adsID, 1L, inpPicture);
         if (Files.exists(imagePath)){
             if (imageList == null){ imageList = new AdsImages(); }
-            imageList.setImageID(1L);
+            imageList.setId(1L);
             imageList.setImagePath(imagePath.toFile().getPath());
             AdsImagesDto adsImgDto = adsImgMapper.entityToDto(adsImageRepo.save(imageList));
             adsFound.setImageListID(adsImgDto.getId());

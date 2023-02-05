@@ -8,7 +8,7 @@ import ru.diploma.project.jd6team5.model.AdsImages;
 public class AdsImagesMapper {
     public AdsImagesDto entityToDto (AdsImages images) {
         return new AdsImagesDto(images.getId(),
-                images.getImageID(),
+                images.getAdsId(),
                 images.getImagePath());
     }
 

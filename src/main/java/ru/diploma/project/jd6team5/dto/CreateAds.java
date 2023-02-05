@@ -6,6 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 public class CreateAds {
     private String description;
-    private Float price;
+    private int price;
     private String title;
 }
