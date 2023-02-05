@@ -8,7 +8,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdsImages {
+public class AdsImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

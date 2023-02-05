@@ -7,6 +7,6 @@ import lombok.*;
 @Data
 public class AdsImagesDto {
     private Long id;
-    private Long imageID;
+    private int adsId;
     private String imagePath;
 }

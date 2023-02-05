@@ -7,7 +7,7 @@ import ru.diploma.project.jd6team5.dto.*;
 import ru.diploma.project.jd6team5.exception.AdsNotFoundException;
 import ru.diploma.project.jd6team5.exception.ImageFileNotFoundException;
 import ru.diploma.project.jd6team5.model.Ads;
-import ru.diploma.project.jd6team5.model.AdsImages;
+import ru.diploma.project.jd6team5.model.AdsImage;
 import ru.diploma.project.jd6team5.repository.AdsImagesRepository;
 import ru.diploma.project.jd6team5.repository.AdsRepository;
 import ru.diploma.project.jd6team5.utils.AdsImagesMapper;
@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -53,12 +54,12 @@ public class AdsService {
         Ads newAds = new Ads();
         newAds.setUserID(userID);
         newAds.setDescription(createAds.getDescription());
-        newAds.setPrice(createAds.getPrice());
+        newAds.setPrice((float)createAds.getPrice());
         newAds.setTitle(createAds.getTitle());
         Ads createdAds = adsRepository.save(newAds);
-        AdsImages image = new AdsImages();
+        AdsImage image = new AdsImage();
         image.setAdsId(createdAds.getId());
-        AdsImages createdImage = adsImageRepo.save(image);
+        AdsImage createdImage = adsImageRepo.save(image);
         Path imagePath = saveIncomeImage(createdImage.getId(), createdAds.getId(), inpPicture);
         if (Files.exists(imagePath)){
             createdImage.setImagePath(imagePath.toFile().getParent());
@@ -71,14 +72,14 @@ public class AdsService {
         Ads adsFound = adsRepository.findById(id).orElseThrow(AdsNotFoundException::new);
         return fullAdsMapper.entityToDto(adsFound);
     }
-    public AdsDto updateAds(long id, CreateAds targetAds) {
+    public AdsDto updateAds(Long id, CreateAds targetAds) {
         Ads newAds = adsRepository.findById(id).orElseThrow(AdsNotFoundException::new);
         newAds.setDescription(targetAds.getDescription());
-        newAds.setPrice(targetAds.getPrice());
+        newAds.setPrice((float) targetAds.getPrice());
         newAds.setTitle(targetAds.getTitle());
         return compactMapper.entityToDto(adsRepository.save(newAds));
     }
-    public void deleteAds(long id) {
+    public void deleteAds(Long id) {
         Ads ads = adsRepository.findById(id).orElseThrow(AdsNotFoundException::new);
         adsRepository.delete(ads);
     }
@@ -95,7 +96,8 @@ public class AdsService {
         return result;
     }
 
-    public ResponseWrapperAds getAllAdsById(long id) {
+
+    public ResponseWrapperAds getAllAdsById(Long id) {
         List<Ads> foundAds = adsRepository.findAllById(id);
         List<AdsDto> foundAdsDto;
         if(foundAds.isEmpty()) {
@@ -112,8 +114,8 @@ public class AdsService {
         return response;
     }
 
-    private Path saveIncomeImage(Long adsID, Long imageID,MultipartFile inpPicture) throws IOException {
-        Path imagePath = Path.of(targetImagesDir + "/image_" + adsID + "_" + imageID +
+    private Path saveIncomeImage(Long id, Long adsId, MultipartFile inpPicture) throws IOException {
+        Path imagePath = Path.of(targetImagesDir + "/image_" + adsId + "_" + id +
                 getExtensionOfFile(inpPicture.getOriginalFilename()));
         Files.createDirectories(imagePath.getParent());
         Files.deleteIfExists(imagePath);
@@ -128,19 +130,30 @@ public class AdsService {
         return imagePath;
     }
 
-    public AdsImagesDto updateAndGetListImages(Long adsID, MultipartFile inpPicture) throws IOException {
-        Ads adsFound = adsRepository.findById(adsID).orElseThrow(AdsNotFoundException::new);
-        AdsImages imageList = adsImageRepo.getAdsImagesByIdAndImageID(adsFound.getImageListID(), 1L).orElse(null);
-        Path imagePath = saveIncomeImage(adsID, 1L, inpPicture);
+    public List<String> updateAndGetListImages(Long adsId, MultipartFile inpPicture) throws IOException {
+        Ads adsFound = adsRepository.findById(adsId).orElseThrow(AdsNotFoundException::new);
+        List<AdsImage> imageList = adsImageRepo.findAdsImageByAdsId(adsFound.getId());
+        AdsImage adsImage;
+        if (imageList.isEmpty()) {
+            adsImage = new AdsImage();
+            adsImage.setAdsId(adsId);
+            adsImage = adsImageRepo.save(adsImage);
+            imageList = new ArrayList<>(List.of(adsImage));
+
+        }
+        Path imagePath = saveIncomeImage(imageList.get(0).getId(), adsId, inpPicture); // Вот тут надо думать над списком картинок, как и куда добавлять новую, как управлять списком!
         if (Files.exists(imagePath)){
-            if (imageList == null){ imageList = new AdsImages(); }
-            imageList.setId(1L);
-            imageList.setImagePath(imagePath.toFile().getPath());
-            AdsImagesDto adsImgDto = adsImgMapper.entityToDto(adsImageRepo.save(imageList));
-            adsFound.setImageListID(adsImgDto.getId());
-            adsRepository.save(adsFound);
-            return adsImgDto;
-        } else { throw new ImageFileNotFoundException("Не найден файл по указанному пути"); }
+            adsImage = imageList.get(0);
+            adsImage.setAdsId(adsId);
+            adsImage.setImagePath(imagePath.toFile().getPath());
+            adsImageRepo.save(adsImage);
+            imageList.set(0, adsImage);
+            return imageList.stream()
+                    .map(i -> i.getImagePath())
+                    .collect(Collectors.toList());
+        } else {
+            throw new ImageFileNotFoundException("Не найден файл по указанному пути");
+        }
     }
 
     private String getExtensionOfFile(String inpPath){

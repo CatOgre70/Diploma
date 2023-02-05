@@ -152,6 +152,9 @@ public class AdsController {
         if (image != null && image.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().build();
         }
+
+        // Вот здесь надо разобраться как взять из фронта userId!!!
+
         return ResponseEntity.ok(adsService.createAds(1L, properties, image));
     }
 
@@ -259,7 +262,7 @@ public class AdsController {
             tags = "Объявления"
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<AdsDto> updateAds(@PathVariable long id, @RequestBody CreateAds targetAds) {
+    public ResponseEntity<AdsDto> updateAds(@PathVariable Long id, @RequestBody CreateAds targetAds) {
         return ResponseEntity.ok(adsService.updateAds(id, targetAds));
     }
 

@@ -101,3 +101,14 @@ alter column price type integer using price::integer;
 --changeset mkachalov:5
 alter table ads
 alter column price type REAL using price::REAL;
+
+-- changeset vasilydemin:1
+alter table ads_images
+    rename column image_id to ids_id;
+
+-- changeset vasilydemin:2
+alter table ads_images
+    rename column ids_id to ads_id;
+
+-- changeset vasilydemin:3
+alter table ads drop column image_list_id;

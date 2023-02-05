@@ -5,9 +5,7 @@ import ru.diploma.project.jd6team5.model.User;
 import ru.diploma.project.jd6team5.model.Ads;
 import ru.diploma.project.jd6team5.dto.FullAdsDto;
 import ru.diploma.project.jd6team5.service.UserService;
-
 import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class FullAdsMapper {

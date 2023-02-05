@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.diploma.project.jd6team5.dto.AdsDto;
 import ru.diploma.project.jd6team5.model.Ads;
-import ru.diploma.project.jd6team5.model.AdsImages;
+import ru.diploma.project.jd6team5.model.AdsImage;
 import ru.diploma.project.jd6team5.repository.AdsImagesRepository;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class AdsMapper {
         adsDto.setAuthor(ads.getUserID().intValue());
         adsDto.setTitle(ads.getTitle());
         adsDto.setPrice(adsDto.getPrice());
-        List<AdsImages> adsImages = adsImagesRepository.getAllImagesByAdsId(ads.getId().intValue());
+        List<AdsImage> adsImages = adsImagesRepository.findAdsImageByAdsId(ads.getId());
         String[] imagesList = new String[0];
         if(!adsImages.isEmpty()) {
             imagesList = new String[adsImages.size()];
@@ -41,10 +41,10 @@ public class AdsMapper {
 
     public Ads dtoToAds(AdsDto dto) {
         Ads ads = new Ads();
-        ads.setId(dto.getPk().longValue());
-        ads.setPrice(dto.getPrice());
+        ads.setId((long) dto.getPk());
+        ads.setPrice((float) dto.getPrice());
         ads.setTitle(dto.getTitle());
-        List<AdsImages> adsImages = adsImagesRepository.getAllImagesByAdsId(dto.getPk());
+        List<AdsImage> adsImages = adsImagesRepository.findAdsImageByAdsId((long) dto.getPk());
         if(adsImages.size() != dto.getImage().length) {
             logger.error("Images lists in AdsDto and Ads are not equals");
             throw new RuntimeException("Images lists in AdsDto and Ads are not equals");
