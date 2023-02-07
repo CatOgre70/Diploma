@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -43,7 +44,7 @@ public class AdsController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = ResponseWrapperAds.class))
+                                    schema = @Schema(implementation = ResponseWrapperAds.class)
                             )
                     ),
                     @ApiResponse(
@@ -54,7 +55,7 @@ public class AdsController {
             }, tags = "Объявления"
     )
     @GetMapping
-    public ResponseEntity<ResponseWrapperAds> getAllAds() {
+    public ResponseEntity<ResponseWrapperAds> getAllAds(Authentication authentication) {
         return ResponseEntity.ok(adsService.getAllAds());
     }
 
@@ -397,6 +398,9 @@ public class AdsController {
     )
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapperAds> getAdsMe(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         Long id = userService.getUserIdByName(authentication.getName());
         ResponseWrapperAds response = adsService.getAllAdsByUserId(id);
         return ResponseEntity.ok(response);
