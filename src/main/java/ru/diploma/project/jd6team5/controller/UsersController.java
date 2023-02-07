@@ -61,7 +61,7 @@ public class UsersController {
     public ResponseEntity<UserDto> getUser(
 //            @Parameter(description = "ИД номер Пользователя") @PathVariable Long userID
     ) {
-        UserDto instUserDto = userService.getUserDto(userService.getUserByID(1L));
+        UserDto instUserDto = userService.getUserDto(userService.getUserByID(6L));
         return ResponseEntity.ok(instUserDto);
     }
 

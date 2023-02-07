@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,9 +71,10 @@ public class AuthController {
             tags = "Авторизация"
     )
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginReqDto req) {
-        if (authService.login(req.getUsername(), req.getPassword())) {
-            return ResponseEntity.ok().build();
+    public ResponseEntity<UserDetails> login(@RequestBody LoginReqDto req) {
+        UserDetails checkedUser = authService.login(req.getUsername(), req.getPassword());
+        if (checkedUser != null){
+            return ResponseEntity.ok().body(checkedUser);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
