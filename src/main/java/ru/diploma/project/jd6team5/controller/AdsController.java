@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,8 @@ import java.io.IOException;
 @RequestMapping(path = "/ads")
 @CrossOrigin(value = "http://localhost:3000")
 public class AdsController {
+
+    private final Logger logger = LoggerFactory.getLogger(AdsController.class);
     private final AdsService adsService;
     private final CommentService commentService;
     private final UserService userService;
@@ -56,6 +60,11 @@ public class AdsController {
     )
     @GetMapping
     public ResponseEntity<ResponseWrapperAds> getAllAds(Authentication authentication) {
+        if(authentication != null) {
+            logger.info(authentication.getName());
+        } else {
+            logger.info("anonymous user");
+        }
         return ResponseEntity.ok(adsService.getAllAds());
     }
 
@@ -401,6 +410,7 @@ public class AdsController {
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        logger.info(authentication.getName());
         Long id = userService.getUserIdByName(authentication.getName());
         ResponseWrapperAds response = adsService.getAllAdsByUserId(id);
         return ResponseEntity.ok(response);
