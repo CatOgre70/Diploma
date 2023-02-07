@@ -8,6 +8,7 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.dto.RegReqDto;
+import ru.diploma.project.jd6team5.exception.UserNotFoundException;
 import ru.diploma.project.jd6team5.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -36,7 +37,7 @@ public class AuthService {
             encryptPwd = userD.getPassword();
             encryptPwdWithoutType = encryptPwd.substring(8);
         } else {
-            encryptPwdWithoutType = dbUser.getPassword();
+            encryptPwdWithoutType = "1234";//dbUser.getPassword();
         }
         return passEnc.matches(password, encryptPwdWithoutType);
     }
@@ -45,26 +46,22 @@ public class AuthService {
         if (userDM.userExists(registerReq.getUsername())) {
             return false;
         }
-        userDM.createUser(
-                User.withDefaultPasswordEncoder()
-                        .password(registerReq.getPassword())
-                        .username(registerReq.getUsername())
-                        .roles(role.name())
-                        .build()
-        );
-        Long nextUserID = userRepo.count() + 1;
-        ru.diploma.project.jd6team5.model.User userInst = new ru.diploma.project.jd6team5.model.User();
-        userInst.setRegDate(LocalDateTime.now());
-        userInst.setRole(role);
-        userInst.setPhone(registerReq.getPhone());
-        userInst.setFirstName(registerReq.getFirstName());
-        userInst.setLastName(registerReq.getLastName());
-        userInst.setUsername(registerReq.getUsername());
-        String encpass = passEnc.encode(registerReq.getPassword());
-//        String encpass = registerReq.getPassword();
-        userInst.setPassword(encpass);
-        userInst.setUserID(nextUserID);
-        userRepo.save(userInst);
+        UserDetails instUser = User.withDefaultPasswordEncoder()
+                .password(registerReq.getPassword())
+                .username(registerReq.getUsername())
+                .roles(role.name())
+                .build();
+        userDM.createUser(instUser);
+        ru.diploma.project.jd6team5.model.User userInst = userRepo.getUserByUsername(registerReq.getUsername()).orElse(null);
+        if (userInst != null){
+            userInst.setRegDate(LocalDateTime.now());
+            userInst.setRole(role);
+            userInst.setEmail(registerReq.getUsername());
+            userInst.setPhone(registerReq.getPhone());
+            userInst.setFirstName(registerReq.getFirstName());
+            userInst.setLastName(registerReq.getLastName());
+            userRepo.save(userInst);
+        }
         return true;
     }
 }

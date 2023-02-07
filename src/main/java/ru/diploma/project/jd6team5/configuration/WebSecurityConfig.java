@@ -1,15 +1,11 @@
 package ru.diploma.project.jd6team5.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
@@ -20,12 +16,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Value("${spring.datasource.url}")
+    /*@Value("${spring.datasource.url}")
     private String url;
     @Value("${spring.datasource.username}")
     private String user;
     @Value("${spring.datasource.password}")
-    private String pass;
+    private String pass;*/
 
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
@@ -36,7 +32,7 @@ public class WebSecurityConfig {
             "/login", "/register"
     };
 
-    @Bean
+    /*@Bean
     public DataSource getDataSource()
     {
         DriverManagerDataSource dataSource =  new DriverManagerDataSource();
@@ -45,9 +41,9 @@ public class WebSecurityConfig {
         dataSource.setUsername(user);
         dataSource.setPassword(pass);
         return dataSource;
-    }
+    }*/
 
-    @Bean
+    /*@Bean
     public InMemoryUserDetailsManager userDetailsService() {
         UserDetails user = User.withDefaultPasswordEncoder()
                 .username("user@gmail.com")
@@ -55,14 +51,14 @@ public class WebSecurityConfig {
                 .roles("USER")
                 .build();
         return new InMemoryUserDetailsManager(user);
-    }
-
-    /*@Bean
-    protected JdbcUserDetailsManager userDbDetailsService() {
-        JdbcUserDetailsManager jdbcUserDM = new JdbcUserDetailsManager();
-        jdbcUserDM.setDataSource(getDataSource());
-        return jdbcUserDM;
     }*/
+
+    @Bean
+    protected UserDetailsManager userDetailsService(DataSource dataSource) {
+        JdbcUserDetailsManager jdbcUser = new JdbcUserDetailsManager(dataSource);
+//        jdbcUser.setCreateUserSql("insert into users (first_name, last_name, username, password, role, phone, enabled) values (?,?,?,?,?,?,?)");
+        return jdbcUser;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
