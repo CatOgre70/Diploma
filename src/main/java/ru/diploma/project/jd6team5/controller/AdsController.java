@@ -18,6 +18,7 @@ import ru.diploma.project.jd6team5.model.Ads;
 import ru.diploma.project.jd6team5.model.Comment;
 import ru.diploma.project.jd6team5.service.AdsService;
 import ru.diploma.project.jd6team5.service.CommentService;
+import ru.diploma.project.jd6team5.service.UserService;
 
 import java.io.IOException;
 
@@ -29,10 +30,12 @@ public class AdsController {
     private final Logger logger = LoggerFactory.getLogger(AdsController.class);
     private final AdsService adsService;
     private final CommentService commentService;
+    private final UserService userService;
 
-    public AdsController(AdsService adsService, CommentService commentService) {
+    public AdsController(AdsService adsService, CommentService commentService, UserService userService) {
         this.adsService = adsService;
         this.commentService = commentService;
+        this.userService = userService;
     }
 
     @Operation(
@@ -44,7 +47,7 @@ public class AdsController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = Ads.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = ResponseWrapperAds.class))
                             )
                     ),
                     @ApiResponse(
@@ -405,7 +408,8 @@ public class AdsController {
     public ResponseEntity<ResponseWrapperAds> getAdsMe(Authentication authentication) {
         String login = authentication.getName();
         logger.info(login);
-        ResponseWrapperAds response = adsService.getAllAdsByUserId(1L);
+        Long id = userService.getUserIdByName(authentication.getName());
+        ResponseWrapperAds response = adsService.getAllAdsByUserId(id);
         return ResponseEntity.ok(response);
     }
 }
