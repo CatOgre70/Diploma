@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.NewPassword;
@@ -58,10 +59,9 @@ public class UsersController {
             }, tags = "Пользователи"
     )
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getUser(
-//            @Parameter(description = "ИД номер Пользователя") @PathVariable Long userID
-    ) {
-        UserDto instUserDto = userService.getUserDto(userService.getUserByID(6L));
+    public ResponseEntity<UserDto> getUser(Authentication authentication) {
+        Long id = userService.getUserIdByName(authentication.getName());
+        UserDto instUserDto = userService.getUserDto(userService.getUserByID(id));
         return ResponseEntity.ok(instUserDto);
     }
 
