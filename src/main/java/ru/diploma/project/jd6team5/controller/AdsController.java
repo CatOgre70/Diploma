@@ -410,8 +410,7 @@ public class AdsController {
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String login = authentication.getName();
-        logger.info(login);
+        logger.info(authentication.getName());
         Long id = userService.getUserIdByName(authentication.getName());
         ResponseWrapperAds response = adsService.getAllAdsByUserId(id);
         return ResponseEntity.ok(response);
