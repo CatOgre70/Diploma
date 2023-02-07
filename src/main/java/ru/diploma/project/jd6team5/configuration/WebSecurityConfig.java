@@ -33,7 +33,7 @@ public class WebSecurityConfig {
             "/swagger-ui.html",
             "/v3/api-docs",
             "/webjars/**",
-            "/login", "/register"
+            "/login", "/register", "/ads"
     };
 
     @Bean
@@ -70,7 +70,8 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests((authz) -> authz
                                 .mvcMatchers(AUTH_WHITELIST).permitAll()
-                                .mvcMatchers("/ads/**", "/users/**").authenticated()
+                                .mvcMatchers( "/ads/**", "/users/**").authenticated()
+
                 )
                 .cors().and()
                 .httpBasic(withDefaults());

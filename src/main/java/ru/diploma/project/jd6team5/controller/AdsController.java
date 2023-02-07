@@ -6,8 +6,11 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.*;
@@ -17,12 +20,13 @@ import ru.diploma.project.jd6team5.service.AdsService;
 import ru.diploma.project.jd6team5.service.CommentService;
 
 import java.io.IOException;
-import java.util.Collections;
 
 @RestController
 @RequestMapping(path = "/ads")
 @CrossOrigin(value = "http://localhost:3000")
 public class AdsController {
+
+    private final Logger logger = LoggerFactory.getLogger(AdsController.class);
     private final AdsService adsService;
     private final CommentService commentService;
 
@@ -51,7 +55,12 @@ public class AdsController {
             }, tags = "Объявления"
     )
     @GetMapping
-    public ResponseEntity<ResponseWrapperAds> getAllAds() {
+    public ResponseEntity<ResponseWrapperAds> getAllAds(Authentication authentication) {
+        if(authentication != null) {
+            logger.info(authentication.getName());
+        } else {
+            logger.info("anonymous user");
+        }
         return ResponseEntity.ok(adsService.getAllAds());
     }
 
@@ -393,9 +402,9 @@ public class AdsController {
             }, tags = "Объявления"
     )
     @GetMapping("/me")
-    public ResponseEntity<ResponseWrapperAds> getAdsMe() {
-        //TODO: Получить параметры Аутентификации Пользователя и вычислить по его Логину ИД номер
-        // Пока это константа
+    public ResponseEntity<ResponseWrapperAds> getAdsMe(Authentication authentication) {
+        String login = authentication.getName();
+        logger.info(login);
         ResponseWrapperAds response = adsService.getAllAdsByUserId(1L);
         return ResponseEntity.ok(response);
     }
