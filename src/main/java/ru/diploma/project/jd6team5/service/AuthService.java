@@ -1,5 +1,6 @@
 package ru.diploma.project.jd6team5.service;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +13,8 @@ import ru.diploma.project.jd6team5.exception.UserNotFoundException;
 import ru.diploma.project.jd6team5.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class AuthService {
@@ -26,20 +29,22 @@ public class AuthService {
         this.passEnc = new BCryptPasswordEncoder();
     }
 
-    public boolean login(String userName, String password) {
-        ru.diploma.project.jd6team5.model.User dbUser = userRepo.getUserByUsername(userName).orElse(null);
+    public UserDetails login(String userName, String password) {
         password = password == null ? "EMPTY" : password;
-        String encryptPwd; String encryptPwdWithoutType;
-        if (!userDM.userExists(userName) && dbUser == null) {
-            return false;
-        } else if (userDM.userExists(userName)){
+        String encryptPwd;
+        String encryptPwdWithoutType;
+        if (!userDM.userExists(userName)) {
+            return null;
+        } else {
             UserDetails userD = userDM.loadUserByUsername(userName);
             encryptPwd = userD.getPassword();
             encryptPwdWithoutType = encryptPwd.substring(8);
-        } else {
-            encryptPwdWithoutType = "1234";//dbUser.getPassword();
+            if (passEnc.matches(password, encryptPwdWithoutType)) {
+                return userD;
+            } else {
+                return null;
+            }
         }
-        return passEnc.matches(password, encryptPwdWithoutType);
     }
 
     public boolean register(RegReqDto registerReq, UserRole role) {
