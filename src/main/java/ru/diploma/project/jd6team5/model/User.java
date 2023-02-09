@@ -27,8 +27,11 @@ public class User{
     private String phone;
     @Enumerated(EnumType.STRING)
     private UserRole role;
-    @Column(name = "avatar_path")
-    private String avatarPath;
+    @Lob
+    @Column(name = "avatar")
+    private byte[] avatar;
     @Column(name = "reg_date")
     private LocalDateTime regDate;
+
+    private String city;
 }

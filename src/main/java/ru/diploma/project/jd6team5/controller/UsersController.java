@@ -7,12 +7,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.NewPassword;
 import ru.diploma.project.jd6team5.dto.UserDto;
+import ru.diploma.project.jd6team5.model.User;
 import ru.diploma.project.jd6team5.service.UserService;
 
 import java.io.IOException;
@@ -58,10 +61,12 @@ public class UsersController {
             }, tags = "Пользователи"
     )
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getUser(
-//            @Parameter(description = "ИД номер Пользователя") @PathVariable Long userID
-    ) {
-        UserDto instUserDto = userService.getUserDto(userService.getUserByID(6L));
+    public ResponseEntity<UserDto> getUser(Authentication authentication) {
+        if(authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        UserDto instUserDto = userService.getUserDto(userService.getUserByID(
+                userService.getUserIdByName(authentication.getName())));
         return ResponseEntity.ok(instUserDto);
     }
 
@@ -163,14 +168,17 @@ public class UsersController {
                     )},
             tags = "Пользователи"
     )
-    @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateUserImage(
-//            @Parameter(description = "ИД номер Пользователя") @PathVariable Long userID,
-                                                  @Parameter(description = "Путь к файлу") @RequestPart MultipartFile inpPicture) throws IOException {
-        if (inpPicture.getSize() > 1024 * 1024 * 10) {
-            return ResponseEntity.badRequest().body("File great than 10 Mb!");
+    @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = {MediaType.IMAGE_PNG_VALUE})
+    public ResponseEntity<byte[]> updateUserImage(Authentication authentication,
+                                                  @Parameter(description = "Путь к файлу")
+                                                  @RequestPart MultipartFile inpPicture) throws IOException {
+        if(authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        userService.updateUserAvatar(1L, inpPicture);
-        return ResponseEntity.ok().body("File Photo was uploaded successfully");
+        if (inpPicture.getSize() > 1024 * 1024 * 10) {
+            return ResponseEntity.badRequest().body("File great than 10 Mb!".getBytes());
+        }
+        byte[] image = userService.updateUserAvatar(userService.getUserIdByName(authentication.getName()), inpPicture);
+        return ResponseEntity.ok().body(image);
     }
 }

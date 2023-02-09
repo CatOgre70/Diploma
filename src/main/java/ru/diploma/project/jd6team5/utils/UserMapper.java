@@ -17,7 +17,7 @@ public class UserMapper {
                 user.getPhone(),
                 user.getRegDate(),
                 "Город", //TODO: user.getCity(),
-                user.getAvatarPath()
+                user.getAvatar()
         );
     }
 
@@ -31,7 +31,8 @@ public class UserMapper {
                 dto.getPhone(),
                 UserRole.USER,
                 dto.getImage(),
-                dto.getRegDate()
+                dto.getRegDate(),
+                dto.getCity()
                 );
     }
 }
