@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -186,7 +187,7 @@ public class UsersController {
             tags = "Пользователи"
     )
     @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateUserImage(@Parameter(description = "Путь к файлу") @RequestPart MultipartFile inpPicture,
+    public ResponseEntity<String> updateUserImage(@Parameter(description = "Путь к файлу") @RequestPart(name = "image") MultipartFile inpPicture,
                                                   Authentication authentication) throws IOException {
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -197,5 +198,46 @@ public class UsersController {
         Long id = userService.getUserIdByName(authentication.getName());
         userService.updateUserAvatar(id, inpPicture);
         return ResponseEntity.ok().body("File Photo was uploaded successfully");
+    }
+
+    @Operation(
+            summary = "getUserImage - Вывод аватара Пользователя",
+            operationId = "getUserImage",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(mediaType = MediaType.IMAGE_JPEG_VALUE)
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    )
+            }, tags = "Пользователи"
+    )
+    @GetMapping("/me/image")
+    public ResponseEntity<byte[]> getUserAvatar(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Long id = userService.getUserIdByName(authentication.getName());
+        User instUser = userService.getUserByID(id);
+        int contentLen = instUser.getAvatarPath() == null ? 0:instUser.getAvatarPath().length;
+        HttpHeaders headersHTTP = new HttpHeaders();
+        headersHTTP.setContentLength(contentLen);
+        return ResponseEntity.status(HttpStatus.OK)
+                .headers(headersHTTP)
+                .body(instUser.getAvatarPath());
     }
 }

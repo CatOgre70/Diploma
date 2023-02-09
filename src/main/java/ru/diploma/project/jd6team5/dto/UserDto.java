@@ -16,5 +16,5 @@ public class UserDto {
     private String phone;
     private LocalDateTime regDate;
     private String city;
-    private String image;
+    private byte[] image;
 }

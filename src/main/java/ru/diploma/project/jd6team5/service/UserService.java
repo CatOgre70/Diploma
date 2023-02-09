@@ -13,6 +13,7 @@ import ru.diploma.project.jd6team5.repository.UserRepository;
 import ru.diploma.project.jd6team5.utils.UserMapper;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -114,9 +115,9 @@ public class UserService {
              BufferedOutputStream bufOutStream = new BufferedOutputStream(outStream, 1024);
         ) {
             bufInpStream.transferTo(bufOutStream);
+            userFound.setAvatarPath(inpPicture.getBytes());
         }
         if (Files.exists(imagePath)){
-            userFound.setAvatarPath(imagePath.toFile().getPath());
             userRepo.save(userFound);
         } else {
             throw new ImageFileNotFoundException("Не найден файл по указанному пути");
