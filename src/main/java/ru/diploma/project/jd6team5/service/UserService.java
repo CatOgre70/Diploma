@@ -118,7 +118,7 @@ public class UserService {
             userFound.setAvatarPath(inpPicture.getBytes());
         }
         if (Files.exists(imagePath)){
-            userRepo.save(userFound);
+            userRepo.saveAndFlush(userFound);
         } else {
             throw new ImageFileNotFoundException("Не найден файл по указанному пути");
         }

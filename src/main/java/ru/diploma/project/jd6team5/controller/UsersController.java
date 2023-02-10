@@ -177,7 +177,7 @@ public class UsersController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "OK",
-                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                            content = @Content(mediaType = MediaType.IMAGE_PNG_VALUE)
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -187,17 +187,17 @@ public class UsersController {
             tags = "Пользователи"
     )
     @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateUserImage(@Parameter(description = "Путь к файлу") @RequestPart(name = "image") MultipartFile inpPicture,
+    public ResponseEntity<byte[]> updateUserImage(@Parameter(description = "Путь к файлу") @RequestPart(name = "image") MultipartFile inpPicture,
                                                   Authentication authentication) throws IOException {
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         if (inpPicture.getSize() > 1024 * 1024 * 10) {
-            return ResponseEntity.badRequest().body("File great than 10 Mb!");
+            return ResponseEntity.badRequest().build();
         }
         Long id = userService.getUserIdByName(authentication.getName());
         userService.updateUserAvatar(id, inpPicture);
-        return ResponseEntity.ok().body("File Photo was uploaded successfully");
+        return ResponseEntity.ok(inpPicture.getBytes());
     }
 
     @Operation(
