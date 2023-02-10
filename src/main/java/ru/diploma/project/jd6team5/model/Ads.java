@@ -24,10 +24,14 @@ public class Ads {
     @Enumerated(EnumType.STRING)
     private AdsStatus status;*/
 
-    public Ads(Long id, Long userID, String title, Float price) {
+    @Lob
+    private byte[] image;
+
+    public Ads(Long id, Long userID, String title, String description, Float price) {
         this.id = id;
         this.userID = userID;
         this.title = title;
+        this.description = description;
         this.price = price;
     }
 }

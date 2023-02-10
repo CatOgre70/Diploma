@@ -19,7 +19,7 @@ public class FullAdsDto {
     private String authorLastName;
     private String description;
     private String email;
-    private List<String> image;
+    private byte[] image;
     private String phone;
     private Long pk;
     private Integer price;

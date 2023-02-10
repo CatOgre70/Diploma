@@ -35,7 +35,8 @@ public class UserMapper {
                 dto.getPhone(),
                 UserRole.USER,
                 avatar,
-                dto.getRegDate()
+                dto.getRegDate(),
+                dto.getCity()
                 );
     }
 }

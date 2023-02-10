@@ -137,3 +137,17 @@ alter table users add column enabled boolean;
 -- changeset maxvagan:9
 CREATE SEQUENCE "public"."users_id_seq";
 ALTER TABLE users ALTER COLUMN user_id SET DEFAULT nextval('"public"."users_id_seq"'::regclass);
+
+-- changeset vasilydemin:4
+alter table ads add column image bytea;
+
+-- changeset vasilydemin:5
+alter table ads drop column image;
+alter table ads add column image oid;
+
+-- changeset vasilydemin:6
+alter table users drop column avatar_path;
+alter table users add column avatar oid;
+
+-- changeset vasilydemin:7
+alter table users add column city varchar(255);

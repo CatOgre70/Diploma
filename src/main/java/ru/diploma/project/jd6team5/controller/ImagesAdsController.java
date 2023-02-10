@@ -10,8 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.diploma.project.jd6team5.dto.AdsImagesDto;
-import ru.diploma.project.jd6team5.dto.UserDto;
 import ru.diploma.project.jd6team5.service.AdsService;
 
 import java.io.IOException;
@@ -52,10 +50,11 @@ public class ImagesAdsController {
                     )},
             tags = "Изображения"
     )
-    @PatchMapping(path = "/{adsID}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<List<String>> updateAdsImages(@Parameter(description = "ИД номер Объявлении") @PathVariable Long adsID,
-                                                        @Parameter(description = "Путь к файлу") @RequestPart MultipartFile inpPicture)
-            throws IOException {
-        return ResponseEntity.ok(adsService.updateAndGetListImages(adsID, inpPicture));
+    @PatchMapping(path = "/{adsID}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = {MediaType.IMAGE_PNG_VALUE})
+    public ResponseEntity<byte[]> updateAdsImages(@Parameter(description = "ИД номер Объявлении")
+                                                  @PathVariable Long adsID,
+                                                  @Parameter(description = "Путь к файлу")
+                                                  @RequestPart MultipartFile inpPicture) throws IOException {
+        return ResponseEntity.ok(adsService.updateAndGetImage(adsID, inpPicture));
     }
 }
