@@ -114,8 +114,7 @@ public class AdsService {
         return response;
     }
 
-    private Ads saveIncomeImage(Long adsId, MultipartFile inpPicture) throws IOException {
-        Ads ads = adsRepository.findById(adsId).orElseThrow(AdsNotFoundException::new);
+    private Ads saveIncomeImage(Ads ads, MultipartFile inpPicture) throws IOException {
         try {
             byte[] bytes = inpPicture.getBytes();
             ads.setImage(bytes);
@@ -127,9 +126,9 @@ public class AdsService {
         return ads;
     }
 
-    public byte[] updateAndGetImage(Long adsId, MultipartFile inpPicture) throws IOException {
+    public String updateAndGetImage(Long adsId, MultipartFile inpPicture) throws IOException {
         Ads adsFound = adsRepository.findById(adsId).orElseThrow(AdsNotFoundException::new);
-        adsFound = saveIncomeImage(adsId, inpPicture);
+        adsFound = saveIncomeImage(adsFound, inpPicture);
         return adsFound.getImage();
     }
 

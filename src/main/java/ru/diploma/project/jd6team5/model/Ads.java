@@ -3,6 +3,7 @@ package ru.diploma.project.jd6team5.model;
 import javax.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 import ru.diploma.project.jd6team5.constants.AdsStatus;
 import ru.diploma.project.jd6team5.constants.CurrencyCode;
 
@@ -25,6 +26,7 @@ public class Ads {
     private AdsStatus status;*/
 
     @Lob
+    @Type(type="org.hibernate.type.ImageType")
     private byte[] image;
 
     public Ads(Long id, Long userID, String title, String description, Float price) {

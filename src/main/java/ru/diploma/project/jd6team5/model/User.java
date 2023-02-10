@@ -3,6 +3,7 @@ package ru.diploma.project.jd6team5.model;
 import javax.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 import ru.diploma.project.jd6team5.constants.UserRole;
 
 
@@ -28,6 +29,7 @@ public class User{
     @Enumerated(EnumType.STRING)
     private UserRole role;
     @Lob
+    @Type(type="org.hibernate.type.ImageType")
     @Column(name = "avatar")
     private byte[] avatar;
     @Column(name = "reg_date")
