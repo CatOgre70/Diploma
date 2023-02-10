@@ -6,8 +6,12 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.*;
@@ -15,20 +19,24 @@ import ru.diploma.project.jd6team5.model.Ads;
 import ru.diploma.project.jd6team5.model.Comment;
 import ru.diploma.project.jd6team5.service.AdsService;
 import ru.diploma.project.jd6team5.service.CommentService;
+import ru.diploma.project.jd6team5.service.UserService;
 
 import java.io.IOException;
-import java.util.Collections;
 
 @RestController
 @RequestMapping(path = "/ads")
 @CrossOrigin(value = "http://localhost:3000")
 public class AdsController {
+
+    private final Logger logger = LoggerFactory.getLogger(AdsController.class);
     private final AdsService adsService;
     private final CommentService commentService;
+    private final UserService userService;
 
-    public AdsController(AdsService adsService, CommentService commentService) {
+    public AdsController(AdsService adsService, CommentService commentService, UserService userService) {
         this.adsService = adsService;
         this.commentService = commentService;
+        this.userService = userService;
     }
 
     @Operation(
@@ -40,7 +48,7 @@ public class AdsController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = Ads.class))
+                                    schema = @Schema(implementation = ResponseWrapperAds.class)
                             )
                     ),
                     @ApiResponse(
@@ -51,7 +59,12 @@ public class AdsController {
             }, tags = "Объявления"
     )
     @GetMapping
-    public ResponseEntity<ResponseWrapperAds> getAllAds() {
+    public ResponseEntity<ResponseWrapperAds> getAllAds(Authentication authentication) {
+        if(authentication != null) {
+            logger.info(authentication.getName());
+        } else {
+            logger.info("anonymous user");
+        }
         return ResponseEntity.ok(adsService.getAllAds());
     }
 
@@ -147,15 +160,15 @@ public class AdsController {
                                              ) @RequestPart CreateAds properties,
                                          @Parameter(description = "Путь к файлу"
                                                  , allowEmptyValue = true
-                                         ) @RequestPart MultipartFile image
+                                         ) @RequestPart MultipartFile image,
+                                         Authentication authentication
     ) throws IOException {
         if (image != null && image.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().build();
         }
+        Long id = userService.getUserIdByName(authentication.getName());
 
-        // Вот здесь надо разобраться как взять из фронта userId!!!
-
-        return ResponseEntity.ok(adsService.createAds(1L, properties, image));
+        return ResponseEntity.ok(adsService.createAds(id, properties, image));
     }
 
     @Operation(
@@ -393,10 +406,13 @@ public class AdsController {
             }, tags = "Объявления"
     )
     @GetMapping("/me")
-    public ResponseEntity<ResponseWrapperAds> getAdsMe() {
-        //TODO: Получить параметры Аутентификации Пользователя и вычислить по его Логину ИД номер
-        // Пока это константа
-        ResponseWrapperAds response = adsService.getAllAdsByUserId(1L);
+    public ResponseEntity<ResponseWrapperAds> getAdsMe(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        logger.info(authentication.getName());
+        Long id = userService.getUserIdByName(authentication.getName());
+        ResponseWrapperAds response = adsService.getAllAdsByUserId(id);
         return ResponseEntity.ok(response);
     }
 }

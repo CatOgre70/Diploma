@@ -117,3 +117,23 @@ alter table ads drop column image_list_id;
 alter table ads drop column currency;
 alter table ads drop column status;
 alter table ads drop column label;
+
+-- changeset maxvagan:6
+alter table users add column enabled smallint;
+
+-- changeset maxvagan:7
+create table authorities
+(
+    id BIGSERIAL NOT NULL,
+    username varchar(255),
+    authority varchar(255),
+    CONSTRAINT authority_id_pkey PRIMARY KEY (id)
+);
+
+-- changeset maxvagan:8
+alter table users drop column enabled;
+alter table users add column enabled boolean;
+
+-- changeset maxvagan:9
+CREATE SEQUENCE "public"."users_id_seq";
+ALTER TABLE users ALTER COLUMN user_id SET DEFAULT nextval('"public"."users_id_seq"'::regclass);

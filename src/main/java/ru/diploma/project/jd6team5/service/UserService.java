@@ -7,15 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.NewPassword;
 import ru.diploma.project.jd6team5.dto.UserDto;
-import ru.diploma.project.jd6team5.exception.BadPasswordException;
-import ru.diploma.project.jd6team5.exception.ImageFileNotFoundException;
-import ru.diploma.project.jd6team5.exception.NewPasswordAlreadyUsedException;
-import ru.diploma.project.jd6team5.exception.UserNotFoundException;
+import ru.diploma.project.jd6team5.exception.*;
 import ru.diploma.project.jd6team5.model.User;
 import ru.diploma.project.jd6team5.repository.UserRepository;
 import ru.diploma.project.jd6team5.utils.UserMapper;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -93,7 +91,6 @@ public class UserService {
         userFound.setPassword(passEnc.encode(newPassword.getNewPassword()));
         return userMapper.entityToDto(userRepo.save(userFound));
     }
-
     public UserDto updateUser(UserDto inpUserDto) {
         User userFound = getUserByID(inpUserDto.getId());
         userFound.setEmail(inpUserDto.getEmail());
@@ -118,12 +115,17 @@ public class UserService {
              BufferedOutputStream bufOutStream = new BufferedOutputStream(outStream, 1024);
         ) {
             bufInpStream.transferTo(bufOutStream);
+            userFound.setAvatarPath(inpPicture.getBytes());
         }
         if (Files.exists(imagePath)){
-            userFound.setAvatarPath(imagePath.toFile().getPath());
-            userRepo.save(userFound);
+            userRepo.saveAndFlush(userFound);
         } else {
             throw new ImageFileNotFoundException("Не найден файл по указанному пути");
         }
+    }
+
+    public Long getUserIdByName(String name) {
+        User user = userRepo.findUserByEmail(name).orElseThrow(UserNotFoundException::new);
+        return user.getUserID();
     }
 }
