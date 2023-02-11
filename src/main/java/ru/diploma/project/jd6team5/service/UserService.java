@@ -13,7 +13,6 @@ import ru.diploma.project.jd6team5.repository.UserRepository;
 import ru.diploma.project.jd6team5.utils.UserMapper;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -94,7 +93,7 @@ public class UserService {
     public UserDto updateUser(UserDto inpUserDto) {
         User userFound = getUserByID(inpUserDto.getId());
         userFound.setEmail(inpUserDto.getEmail());
-        userFound.setAvatarPath(inpUserDto.getImage());
+        userFound.setAvatar(inpUserDto.getImage());
         userFound.setFirstName(inpUserDto.getFirstName());
         userFound.setLastName(inpUserDto.getLastName());
         userFound.setPhone(inpUserDto.getPhone());
@@ -115,7 +114,7 @@ public class UserService {
              BufferedOutputStream bufOutStream = new BufferedOutputStream(outStream, 1024);
         ) {
             bufInpStream.transferTo(bufOutStream);
-            userFound.setAvatarPath(inpPicture.getBytes());
+            userFound.setAvatar(imagePath.toString());
         }
         if (Files.exists(imagePath)){
             userRepo.saveAndFlush(userFound);

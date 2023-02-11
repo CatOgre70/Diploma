@@ -5,8 +5,6 @@ import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.dto.UserDto;
 import ru.diploma.project.jd6team5.model.User;
 
-import java.nio.charset.StandardCharsets;
-
 @Component
 public class UserMapper {
 
@@ -19,7 +17,7 @@ public class UserMapper {
                 user.getPhone(),
                 user.getRegDate(),
                 "Город",
-                user.getAvatarPath()
+                user.getAvatar()
         );
     }
 
@@ -33,8 +31,7 @@ public class UserMapper {
                 dto.getPhone(),
                 UserRole.USER,
                 dto.getImage(),
-                dto.getRegDate(),
-                dto.getCity()
-                );
+                dto.getRegDate()
+        );
     }
 }

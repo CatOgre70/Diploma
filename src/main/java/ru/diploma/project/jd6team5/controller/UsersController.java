@@ -227,17 +227,17 @@ public class UsersController {
             }, tags = "Пользователи"
     )
     @GetMapping("/me/image")
-    public ResponseEntity<byte[]> getUserAvatar(Authentication authentication) {
+    public ResponseEntity<String> getUserAvatar(Authentication authentication) {
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         Long id = userService.getUserIdByName(authentication.getName());
         User instUser = userService.getUserByID(id);
-        int contentLen = instUser.getAvatarPath() == null ? 0:instUser.getAvatarPath().length;
+        int contentLen = instUser.getAvatar() == null ? 0:instUser.getAvatar().length();
         HttpHeaders headersHTTP = new HttpHeaders();
         headersHTTP.setContentLength(contentLen);
         return ResponseEntity.status(HttpStatus.OK)
                 .headers(headersHTTP)
-                .body(instUser.getAvatarPath());
+                .body(instUser.getAvatar());
     }
 }
