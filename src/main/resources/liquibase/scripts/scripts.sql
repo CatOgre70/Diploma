@@ -158,3 +158,6 @@ alter table ads add column image bytea;
 alter table users drop column avatar;
 alter table users add column avatar bytea;
 
+--changeset vasilydemin:9
+alter table ads drop column image;
+alter table ads add column image varchar(255);
