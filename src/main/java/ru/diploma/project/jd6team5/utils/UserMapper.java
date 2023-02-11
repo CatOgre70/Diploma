@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 public class UserMapper {
 
     public UserDto entityToDto (User user) {
-        byte[] avatar = user.getAvatarPath() == null ? null : user.getAvatarPath();
+        String avatar = user.getAvatar() == null ? null : "/users/me/getavatar";
         return new UserDto(
                 user.getEmail(),
                 user.getFirstName(),
@@ -19,13 +19,13 @@ public class UserMapper {
                 user.getLastName(),
                 user.getPhone(),
                 user.getRegDate(),
-                "Город",
+                user.getCity(),
                 avatar
         );
     }
 
     public User dtoToUser(UserDto dto) {
-        byte[] avatar = dto.getImage() == null ? null : dto.getImage();
+        String avatar = dto.getImage() == null ? null : dto.getImage();
         return new User(dto.getId(),
                 dto.getEmail(),
                 dto.getFirstName(),

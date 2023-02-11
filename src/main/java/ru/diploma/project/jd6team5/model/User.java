@@ -28,12 +28,8 @@ public class User{
     private String phone;
     @Enumerated(EnumType.STRING)
     private UserRole role;
-    @Lob
-    @Type(type="org.hibernate.type.ImageType")
-    @Column(name = "avatar")
-    private byte[] avatar;
+    private String avatar;
     @Column(name = "reg_date")
     private LocalDateTime regDate;
-
     private String city;
 }
