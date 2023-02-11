@@ -17,7 +17,16 @@ public class AdsMapper {
         adsDto.setAuthor(ads.getUserID().intValue());
         adsDto.setTitle(ads.getTitle());
         adsDto.setPrice(ads.getPrice().intValue());
-        adsDto.setImage(ads.getImage());
+        String str = "/ads/{adsId}/getimage";
+        str = str.replace("{adsId}", ads.getId().toString());
+/*        String str = ads.getImage();
+        if(str != null) {
+            str = str.substring(19);
+            str = str.replace('\\', '/');
+            str = str.replace(" ", "%20");
+        }
+ */
+        adsDto.setImage(str);
         return adsDto;
     }
 

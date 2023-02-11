@@ -51,7 +51,7 @@ public class ImagesAdsController {
             tags = "Изображения"
     )
     @PatchMapping(path = "/{adsID}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> updateAdsImages(@Parameter(description = "ИД номер Объявлении")
+    public ResponseEntity<String> updateAdsImages(@Parameter(description = "ИД номер Объявлении")
                                                   @PathVariable Long adsID,
                                                   @Parameter(description = "Путь к файлу")
                                                   @RequestPart MultipartFile inpPicture) throws IOException {

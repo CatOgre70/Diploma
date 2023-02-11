@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.*;
+import ru.diploma.project.jd6team5.exception.AdsNotFoundException;
 import ru.diploma.project.jd6team5.model.Ads;
 import ru.diploma.project.jd6team5.model.Comment;
 import ru.diploma.project.jd6team5.service.AdsService;
@@ -22,6 +23,8 @@ import ru.diploma.project.jd6team5.service.CommentService;
 import ru.diploma.project.jd6team5.service.UserService;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping(path = "/ads")
@@ -415,4 +418,13 @@ public class AdsController {
         ResponseWrapperAds response = adsService.getAllAdsByUserId(id);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping(value = "/{adsId}/getimage", produces = {MediaType.IMAGE_PNG_VALUE})
+    public byte[] getImage(Authentication authentication, @PathVariable Long adsId) throws IOException {
+        Ads ads = adsService.findById(adsId).orElseThrow(AdsNotFoundException::new);
+        Path imagePath = Path.of(ads.getImage());
+        return Files.readAllBytes(imagePath);
+    }
+
+
 }

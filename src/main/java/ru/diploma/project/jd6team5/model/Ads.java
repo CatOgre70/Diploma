@@ -25,9 +25,7 @@ public class Ads {
     @Enumerated(EnumType.STRING)
     private AdsStatus status;*/
 
-    @Lob
-    @Type(type="org.hibernate.type.ImageType")
-    private byte[] image;
+    private String image;
 
     public Ads(Long id, Long userID, String title, String description, Float price) {
         this.id = id;

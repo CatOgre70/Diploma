@@ -11,9 +11,14 @@ import ru.diploma.project.jd6team5.utils.AdsMapper;
 import ru.diploma.project.jd6team5.utils.FullAdsMapper;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
+import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 /**
  * Класс описывающий логику получения и обработки информации по сущности объявление
@@ -34,20 +39,28 @@ public class AdsService {
         this.compactMapper = compactMapper;
     }
 
-    public AdsDto createAds(Long userID, CreateAds createAds, MultipartFile inpPicture) {
+    public AdsDto createAds(Long userID, CreateAds createAds, MultipartFile inpPicture) throws IOException {
         Ads newAds = new Ads();
         newAds.setUserID(userID);
         newAds.setDescription(createAds.getDescription());
         newAds.setPrice((float)createAds.getPrice());
         newAds.setTitle(createAds.getTitle());
         Ads createdAds = adsRepository.save(newAds);
-        try {
-            byte[] image = inpPicture.getBytes();
-            createdAds.setImage(image);
-            createdAds = adsRepository.save(createdAds);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
+
+        Path imagePath = Path.of(targetImagesDir + "/image_" + createdAds.getId() +
+                getExtensionOfFile(inpPicture.getOriginalFilename()));
+        Files.createDirectories(imagePath.getParent());
+        Files.deleteIfExists(imagePath);
+        // Создание потоков и вызов метода передачи данных по 1-му килобайту
+        try (InputStream inpStream = inpPicture.getInputStream();
+             OutputStream outStream = Files.newOutputStream(imagePath, CREATE_NEW);
+             BufferedInputStream bufInpStream = new BufferedInputStream(inpStream, 1024);
+             BufferedOutputStream bufOutStream = new BufferedOutputStream(outStream, 1024);
+        ) {
+            bufInpStream.transferTo(bufOutStream);
         }
+        createdAds.setImage(imagePath.toString());
+        createdAds = adsRepository.save(createdAds);
         return compactMapper.entityToDto(createdAds);
     }
 
@@ -114,22 +127,29 @@ public class AdsService {
         return response;
     }
 
-    private Ads saveIncomeImage(Ads ads, MultipartFile inpPicture) throws IOException {
-        try {
-            byte[] bytes = inpPicture.getBytes();
-            ads.setImage(bytes);
-            ads = adsRepository.save(ads);
+    private Path saveIncomeImage(Long adsId, MultipartFile inpPicture) throws IOException {
+        Path imagePath = Path.of(targetImagesDir + "/image_" + adsId +
+                getExtensionOfFile(inpPicture.getOriginalFilename()));
+        Files.createDirectories(imagePath.getParent());
+        Files.deleteIfExists(imagePath);
+        // Создание потоков и вызов метода передачи данных по 1-му килобайту
+        try (InputStream inpStream = inpPicture.getInputStream();
+             OutputStream outStream = Files.newOutputStream(imagePath, CREATE_NEW);
+             BufferedInputStream bufInpStream = new BufferedInputStream(inpStream, 1024);
+             BufferedOutputStream bufOutStream = new BufferedOutputStream(outStream, 1024);
+        ) {
+            bufInpStream.transferTo(bufOutStream);
         }
-        catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-        return ads;
+        return imagePath;
     }
 
     public String updateAndGetImage(Long adsId, MultipartFile inpPicture) throws IOException {
         Ads adsFound = adsRepository.findById(adsId).orElseThrow(AdsNotFoundException::new);
-        adsFound = saveIncomeImage(adsFound, inpPicture);
-        return adsFound.getImage();
+        Path imagePath = saveIncomeImage(adsFound.getId(), inpPicture);
+        String imagePathString = imagePath.toString();
+        adsFound.setImage(imagePathString);
+        adsRepository.save(adsFound);
+        return imagePathString;
     }
 
     private String getExtensionOfFile(String inpPath){
@@ -138,5 +158,9 @@ public class AdsService {
         } else {
             return "";
         }
+    }
+
+    public Optional<Ads> findById(Long adsId) {
+        return adsRepository.findById(adsId);
     }
 }
