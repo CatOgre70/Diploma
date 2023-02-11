@@ -210,9 +210,6 @@ public class UsersController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value="/me/getavatar", produces = {MediaType.IMAGE_JPEG_VALUE})
     public ResponseEntity<byte[]> getUserAvatar(Authentication authentication) throws IOException {
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         return ResponseEntity.ok(userService.getUserAvatar(authentication));
     }
 }
