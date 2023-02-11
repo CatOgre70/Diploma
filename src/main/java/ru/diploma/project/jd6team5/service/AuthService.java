@@ -1,6 +1,5 @@
 package ru.diploma.project.jd6team5.service;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,12 +8,9 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.dto.RegReqDto;
-import ru.diploma.project.jd6team5.exception.UserNotFoundException;
 import ru.diploma.project.jd6team5.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class AuthService {

@@ -158,15 +158,15 @@ public class AdsController {
                                              ) @RequestPart CreateAds properties,
                                          @Parameter(description = "Путь к файлу"
                                                  , allowEmptyValue = true
-                                         ) @RequestPart MultipartFile image
+                                         ) @RequestPart MultipartFile image,
+                                         Authentication authentication
     ) throws IOException {
         if (image != null && image.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().build();
         }
+        Long id = userService.getUserIdByName(authentication.getName());
 
-        // Вот здесь надо разобраться как взять из фронта userId!!!
-
-        return ResponseEntity.ok(adsService.createAds(1L, properties, image));
+        return ResponseEntity.ok(adsService.createAds(id, properties, image));
     }
 
     @Operation(

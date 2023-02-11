@@ -13,6 +13,11 @@ import ru.diploma.project.jd6team5.repository.UserRepository;
 import ru.diploma.project.jd6team5.utils.UserMapper;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 /**
  * Класс описывающий логику получения и обработки информации по сущности Пользователь
@@ -89,7 +94,7 @@ public class UserService {
     public UserDto updateUser(UserDto inpUserDto) {
         User userFound = getUserByID(inpUserDto.getId());
         userFound.setEmail(inpUserDto.getEmail());
-        userFound.setAvatar(inpUserDto.getImage());
+        userFound.setAvatarPath(inpUserDto.getImage());
         userFound.setFirstName(inpUserDto.getFirstName());
         userFound.setLastName(inpUserDto.getLastName());
         userFound.setPhone(inpUserDto.getPhone());
@@ -98,16 +103,25 @@ public class UserService {
         return userMapper.entityToDto(userFound);
     }
 
-    public byte[] updateUserAvatar(Long userID, MultipartFile inpPicture) throws IOException {
+    public void updateUserAvatar(Long userID, MultipartFile inpPicture) throws IOException {
         User userFound = getUserByID(userID);
-        try {
-            byte[] image = inpPicture.getBytes();
-            userFound.setAvatar(image);
-            userFound = userRepo.save(userFound);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
+        Path imagePath = Path.of(targetAvatarDir + "/avatar" + userID + getExtensionOfFile(inpPicture.getOriginalFilename()));
+        Files.createDirectories(imagePath.getParent());
+        Files.deleteIfExists(imagePath);
+        // Создание потоков и вызов метода передачи данных по 1-му килобайту
+        try (InputStream inpStream = inpPicture.getInputStream();
+             OutputStream outStream = Files.newOutputStream(imagePath, CREATE_NEW);
+             BufferedInputStream bufInpStream = new BufferedInputStream(inpStream, 1024);
+             BufferedOutputStream bufOutStream = new BufferedOutputStream(outStream, 1024);
+        ) {
+            bufInpStream.transferTo(bufOutStream);
+            userFound.setAvatarPath(inpPicture.getBytes());
         }
-        return userFound.getAvatar();
+        if (Files.exists(imagePath)){
+            userRepo.saveAndFlush(userFound);
+        } else {
+            throw new ImageFileNotFoundException("Не найден файл по указанному пути");
+        }
     }
 
     public Long getUserIdByName(String name) {

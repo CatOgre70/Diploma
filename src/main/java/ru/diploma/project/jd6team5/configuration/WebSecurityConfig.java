@@ -1,6 +1,5 @@
 package ru.diploma.project.jd6team5.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,8 +37,7 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests((authz) -> authz
                                 .mvcMatchers(AUTH_WHITELIST).permitAll()
-                                .mvcMatchers( "/ads/**", "/users/**").authenticated()
-
+                                .mvcMatchers("/ads/**", "/users/**").authenticated()
                 )
                 .cors().and()
                 .httpBasic(withDefaults());

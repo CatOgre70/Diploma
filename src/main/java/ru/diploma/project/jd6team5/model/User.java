@@ -8,6 +8,7 @@ import ru.diploma.project.jd6team5.constants.UserRole;
 
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Entity(name = "users")
@@ -28,12 +29,8 @@ public class User{
     private String phone;
     @Enumerated(EnumType.STRING)
     private UserRole role;
-    @Lob
-    @Type(type="org.hibernate.type.ImageType")
-    @Column(name = "avatar")
-    private byte[] avatar;
+    @Column(name = "avatar_path")
+    private String avatarPath;
     @Column(name = "reg_date")
     private LocalDateTime regDate;
-
-    private String city;
 }
