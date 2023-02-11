@@ -154,8 +154,8 @@ public class AdsController {
     )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdsDto> addAds(@Parameter(description = "Первичные данные об Объявлении"
-                                                     , schema = @Schema(implementation = CreateAds.class)
-                                             ) @RequestPart CreateAds properties,
+            , schema = @Schema(implementation = CreateAds.class)
+    ) @RequestPart CreateAds properties,
                                          @Parameter(description = "Путь к файлу"
                                                  , allowEmptyValue = true
                                          ) @RequestPart MultipartFile image,
@@ -205,10 +205,11 @@ public class AdsController {
             tags = "Объявления"
     )
     @PostMapping(path = "/{adsID}/comments")
-    public ResponseEntity<CommentDto> addCommentToAds(@PathVariable Long adsID, @RequestBody CommentDto inpComment){
+    public ResponseEntity<CommentDto> addCommentToAds(@PathVariable Long adsID, @RequestBody CommentDto inpComment) {
         Long inAdsID = adsService.findFullAds(adsID).getPk();
         return ResponseEntity.ok(commentService.addComment(inAdsID, inpComment));
     }
+
     @Operation(
             summary = "Удаление Объявления",
             operationId = "removeAds",
@@ -231,10 +232,10 @@ public class AdsController {
             tags = "Объявления"
     )
     @DeleteMapping(path = "/{adsID}")
-    public ResponseEntity<?> removeAds(@PathVariable Long adsID){
+    public ResponseEntity<?> removeAds(@PathVariable Long adsID) {
         adsService.deleteAds(adsID);
         return ResponseEntity.ok().build();
-        }
+    }
 
     @Operation(
             summary = "updateAds - Изменение данных в Объявлении",
@@ -328,10 +329,11 @@ public class AdsController {
     )
     @DeleteMapping("/{adsID}/comment/{commentID}")
     public ResponseEntity<String> deleteComment(@PathVariable Long adsID,
-                                           @PathVariable Long commentID) {
+                                                @PathVariable Long commentID) {
         commentService.deleteComment(adsID, commentID);
         return ResponseEntity.ok().body("Комментарий удалён");
     }
+
     @Operation(
             summary = "Обновление Комментария у данного Объявления",
             operationId = "updateComments",
@@ -446,12 +448,12 @@ public class AdsController {
     @GetMapping(value = "/{adsId}/getimage", produces = {MediaType.IMAGE_PNG_VALUE})
     public byte[] getImage(@PathVariable Long adsId) throws IOException {
         Ads ads = adsService.findById(adsId).orElseThrow(AdsNotFoundException::new);
-        String imagePathString = ads.getImage();
-        if(imagePathString == null) {
+        if (ads.getImage() == null) {
             return null;
+        } else {
+            Path imagePath = Path.of(ads.getImage());
+            return Files.readAllBytes(imagePath);
         }
-        Path imagePath = Path.of(imagePathString);
-        return Files.readAllBytes(imagePath);
     }
 
 }

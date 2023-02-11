@@ -9,6 +9,7 @@ import ru.diploma.project.jd6team5.model.User;
 public class UserMapper {
 
     public UserDto entityToDto (User user) {
+        String avatar = user.getAvatar() == null ? null : "/users/me/getavatar";
         return new UserDto(
                 user.getEmail(),
                 user.getFirstName(),
@@ -16,12 +17,13 @@ public class UserMapper {
                 user.getLastName(),
                 user.getPhone(),
                 user.getRegDate(),
-                "Город",
-                user.getAvatar()
+                user.getCity(),
+                avatar
         );
     }
 
     public User dtoToUser(UserDto dto) {
+        String avatar = dto.getImage() == null ? null : dto.getImage();
         return new User(dto.getId(),
                 dto.getEmail(),
                 dto.getFirstName(),
@@ -30,8 +32,9 @@ public class UserMapper {
                 null, //TODO: как-то заполнять пароль
                 dto.getPhone(),
                 UserRole.USER,
-                dto.getImage(),
-                dto.getRegDate()
-        );
+                avatar,
+                dto.getRegDate(),
+                dto.getCity()
+                );
     }
 }
