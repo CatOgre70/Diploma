@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -226,12 +227,10 @@ public class UsersController {
                     )
             }, tags = "Пользователи"
     )
-    @GetMapping(value="/me/getavatar", produces = {MediaType.IMAGE_JPEG_VALUE})
-    public ResponseEntity<byte[]> getUserAvatar(Authentication authentication) throws IOException {
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        return ResponseEntity.ok(userService.getUserAvatar(authentication));
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value="/{id}/getavatar", produces = {MediaType.IMAGE_PNG_VALUE})
+    public byte[] getUserAvatar(Authentication authentication, @PathVariable Long id) throws IOException {
+        return userService.getUserAvatar(id);
         /*HttpHeaders headersHTTP = new HttpHeaders();
         headersHTTP.setContentLength(contentLen);
         return ResponseEntity.status(HttpStatus.OK)

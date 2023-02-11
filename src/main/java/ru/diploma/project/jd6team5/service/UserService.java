@@ -1,7 +1,6 @@
 package ru.diploma.project.jd6team5.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import ru.diploma.project.jd6team5.repository.UserRepository;
 import ru.diploma.project.jd6team5.utils.UserMapper;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -125,13 +123,14 @@ public class UserService {
         }
     }
 
-    public byte[] getUserAvatar(Authentication authentication) throws IOException {
-        Long id = getUserIdByName(authentication.getName());
+    public byte[] getUserAvatar(Long id) throws IOException {
         User userFound = getUserByID(id);
         if (userFound.getAvatar() != null) {
             Path imagePath = Path.of(userFound.getAvatar());
             return Files.readAllBytes(imagePath);
-        } else { return null; }
+        } else {
+            return null;
+        }
     }
 
     public Long getUserIdByName(String name) {

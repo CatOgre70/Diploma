@@ -16,13 +16,15 @@ import java.time.LocalDateTime;
 public class AuthService {
 
     private final UserDetailsManager userDM;
-    private final PasswordEncoder passEnc;
+
     private final UserRepository userRepo;
+
+    private final PasswordEncoder passwordEncoder;
 
     public AuthService(UserDetailsManager userDM, UserRepository userRepo) {
         this.userDM = userDM;
         this.userRepo = userRepo;
-        this.passEnc = new BCryptPasswordEncoder();
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     public UserDetails login(String userName, String password) {
@@ -35,7 +37,7 @@ public class AuthService {
             UserDetails userD = userDM.loadUserByUsername(userName);
             encryptPwd = userD.getPassword();
             encryptPwdWithoutType = encryptPwd.substring(8);
-            if (passEnc.matches(password, encryptPwdWithoutType)) {
+            if (passwordEncoder.matches(password, encryptPwdWithoutType)) {
                 return userD;
             } else {
                 return null;

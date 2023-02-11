@@ -9,7 +9,11 @@ import ru.diploma.project.jd6team5.model.User;
 public class UserMapper {
 
     public UserDto entityToDto (User user) {
-        String avatar = user.getAvatar() == null ? null : "/users/me/getavatar";
+        String avatar = user.getAvatar();
+        if(avatar != null) {
+            avatar = "/users/{id}/getavatar";
+            avatar = avatar.replace("{id}", user.getUserID().toString());
+        }
         return new UserDto(
                 user.getEmail(),
                 user.getFirstName(),

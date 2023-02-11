@@ -446,13 +446,13 @@ public class AdsController {
             }, tags = "Объявления"
     )
     @GetMapping(value = "/{adsId}/getimage", produces = {MediaType.IMAGE_PNG_VALUE})
-    public byte[] getImage(@PathVariable Long adsId) throws IOException {
+    public ResponseEntity<byte[]> getImage(@PathVariable Long adsId) throws IOException {
         Ads ads = adsService.findById(adsId).orElseThrow(AdsNotFoundException::new);
         if (ads.getImage() == null) {
-            return null;
+            return ResponseEntity.ok(null);
         } else {
             Path imagePath = Path.of(ads.getImage());
-            return Files.readAllBytes(imagePath);
+            return ResponseEntity.ok(Files.readAllBytes(imagePath));
         }
     }
 
