@@ -14,7 +14,6 @@ import ru.diploma.project.jd6team5.repository.UserRepository;
 import ru.diploma.project.jd6team5.utils.UserMapper;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 

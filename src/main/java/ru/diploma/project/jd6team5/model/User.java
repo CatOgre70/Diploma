@@ -3,7 +3,6 @@ package ru.diploma.project.jd6team5.model;
 import javax.persistence.*;
 
 import lombok.*;
-import org.hibernate.annotations.Type;
 import ru.diploma.project.jd6team5.constants.UserRole;
 
 

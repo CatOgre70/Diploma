@@ -5,13 +5,15 @@ import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.dto.UserDto;
 import ru.diploma.project.jd6team5.model.User;
 
-import java.nio.charset.StandardCharsets;
-
 @Component
 public class UserMapper {
 
     public UserDto entityToDto (User user) {
-        String avatar = user.getAvatar() == null ? null : "/users/me/getavatar";
+        String avatar = user.getAvatar();
+        if(avatar != null) {
+            avatar = "/users/{id}/getavatar";
+            avatar = avatar.replace("{id}", user.getUserID().toString());
+        }
         return new UserDto(
                 user.getEmail(),
                 user.getFirstName(),
