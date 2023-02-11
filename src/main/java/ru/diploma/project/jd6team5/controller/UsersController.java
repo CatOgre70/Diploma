@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.dto.NewPassword;
+import ru.diploma.project.jd6team5.dto.ResponseWrapperAds;
 import ru.diploma.project.jd6team5.dto.UserDto;
+import ru.diploma.project.jd6team5.exception.UserNotFoundException;
 import ru.diploma.project.jd6team5.model.User;
 import ru.diploma.project.jd6team5.service.UserService;
 
@@ -208,7 +210,7 @@ public class UsersController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "OK",
-                            content = @Content(mediaType = MediaType.IMAGE_JPEG_VALUE)
+                            content = @Content(mediaType = MediaType.IMAGE_PNG_VALUE)
                     ),
                     @ApiResponse(
                             responseCode = "401",
@@ -229,8 +231,8 @@ public class UsersController {
     )
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value="/{id}/getavatar", produces = {MediaType.IMAGE_PNG_VALUE})
-    public byte[] getUserAvatar(Authentication authentication, @PathVariable Long id) throws IOException {
-        return userService.getUserAvatar(id);
+    public ResponseEntity<byte[]> getUserAvatar(Authentication authentication, @PathVariable Long id) throws IOException {
+        return ResponseEntity.ok(userService.getUserAvatar(authentication, id));
         /*HttpHeaders headersHTTP = new HttpHeaders();
         headersHTTP.setContentLength(contentLen);
         return ResponseEntity.status(HttpStatus.OK)
