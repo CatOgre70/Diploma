@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,11 +63,9 @@ public class UsersController {
                     )
             }, tags = "Пользователи"
     )
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public ResponseEntity<UserDto> getUser(Authentication authentication) {
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         Long id = userService.getUserIdByName(authentication.getName());
         UserDto instUserDto = userService.getUserDto(userService.getUserByID(id));
         return ResponseEntity.ok(instUserDto);
@@ -98,15 +97,12 @@ public class UsersController {
                     )},
             tags = "Пользователи"
     )
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/set_password")
     public ResponseEntity<UserDto> setPassword(@Parameter(description = "Данные о пароле Пользователя") @RequestBody NewPassword inpPWD,
                                                Authentication authentication
     ) {
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        Long id = userService.getUserIdByName(authentication.getName());
-        UserDto resultEntity = userService.updatePassword(id, inpPWD);
+        UserDto resultEntity = userService.updatePassword(authentication.getName(), inpPWD);
         return ResponseEntity.ok(resultEntity);
     }
 
@@ -150,24 +146,12 @@ public class UsersController {
                     )},
             tags = "Пользователи"
     )
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/me")
     public ResponseEntity<UserDto> updateUserData(@RequestBody UserDto inpUser,
                                                   Authentication authentication) {
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        Long id = userService.getUserIdByName(authentication.getName());
-        User currUser = userService.getUserByID(id);
-        if (currUser.getRole().equals(UserRole.USER) &&
-                !currUser.getEmail().equals(inpUser.getEmail())){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        UserDto resultEntity = userService.updateUser(inpUser);
-        if (resultEntity != null) {
-            return ResponseEntity.ok(resultEntity);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        UserDto resultEntity = userService.updateUser(inpUser, authentication.getName());
+        return ResponseEntity.ok(resultEntity);
     }
 
     @Operation(
@@ -186,17 +170,14 @@ public class UsersController {
                     )},
             tags = "Пользователи"
     )
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> updateUserImage(@Parameter(description = "Путь к файлу") @RequestPart(name = "image") MultipartFile inpPicture,
                                                   Authentication authentication) throws IOException {
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         if (inpPicture.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().build();
         }
-        Long id = userService.getUserIdByName(authentication.getName());
-        userService.updateUserAvatar(id, inpPicture);
+        userService.updateUserAvatar(authentication.getName(), inpPicture);
         return ResponseEntity.ok(inpPicture.getBytes());
     }
 
@@ -226,16 +207,12 @@ public class UsersController {
                     )
             }, tags = "Пользователи"
     )
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value="/me/getavatar", produces = {MediaType.IMAGE_JPEG_VALUE})
     public ResponseEntity<byte[]> getUserAvatar(Authentication authentication) throws IOException {
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(userService.getUserAvatar(authentication));
-        /*HttpHeaders headersHTTP = new HttpHeaders();
-        headersHTTP.setContentLength(contentLen);
-        return ResponseEntity.status(HttpStatus.OK)
-                .headers(headersHTTP)
-                .body(instUser.getAvatar());*/
     }
 }
