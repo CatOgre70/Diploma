@@ -62,12 +62,7 @@ public class AdsController {
             }, tags = "Объявления"
     )
     @GetMapping
-    public ResponseEntity<ResponseWrapperAds> getAllAds(Authentication authentication) {
-        if(authentication != null) {
-            logger.info(authentication.getName());
-        } else {
-            logger.info("anonymous user");
-        }
+    public ResponseEntity<ResponseWrapperAds> getAllAds() {
         return ResponseEntity.ok(adsService.getAllAds());
     }
 
@@ -419,12 +414,44 @@ public class AdsController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "get Ads image - вывод картинки объявления",
+            operationId = "getAdsImageUsingGET",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.IMAGE_PNG_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = byte[].class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    )
+            }, tags = "Объявления"
+    )
     @GetMapping(value = "/{adsId}/getimage", produces = {MediaType.IMAGE_PNG_VALUE})
-    public byte[] getImage(Authentication authentication, @PathVariable Long adsId) throws IOException {
+    public byte[] getImage(@PathVariable Long adsId) throws IOException {
         Ads ads = adsService.findById(adsId).orElseThrow(AdsNotFoundException::new);
-        Path imagePath = Path.of(ads.getImage());
+        String imagePathString = ads.getImage();
+        if(imagePathString == null) {
+            return null;
+        }
+        Path imagePath = Path.of(imagePathString);
         return Files.readAllBytes(imagePath);
     }
-
 
 }
