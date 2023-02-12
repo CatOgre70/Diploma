@@ -309,7 +309,7 @@ public class AdsController {
             tags = "Объявления"
     )
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{adsID}/comment/{commentID}")
+    @GetMapping("/{adsID}/comments/{commentID}")
     public ResponseEntity<CommentDto> getComment(@PathVariable Long adsID, @PathVariable Long commentID) {
         return ResponseEntity.ok(commentService.findByIdAndAdsId(adsID, commentID));
     }
@@ -341,7 +341,7 @@ public class AdsController {
             tags = "Объявления"
     )
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{adsID}/comment/{commentID}")
+    @DeleteMapping("/{adsID}/comments/{commentID}")
     public ResponseEntity<String> deleteComment(@PathVariable Long adsID,
                                                 @PathVariable Long commentID, Authentication authentication) {
         CommentDto commentDto = commentService.findByIdAndAdsId(adsID, commentID);
@@ -368,7 +368,7 @@ public class AdsController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Comment.class)
+                                    schema = @Schema(implementation = CommentDto.class)
                             )
                     ),
                     @ApiResponse(
@@ -389,7 +389,7 @@ public class AdsController {
             tags = "Объявления"
     )
     @PreAuthorize("isAuthenticated()")
-    @PatchMapping("/{adsID}/comment/{commentID}")
+    @PatchMapping("/{adsID}/comments/{commentID}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable Long adsID,
                                                     @PathVariable Long commentID,
                                                     @RequestBody CommentDto dto,
