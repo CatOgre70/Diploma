@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.diploma.project.jd6team5.dto.*;
+import ru.diploma.project.jd6team5.exception.AdsNotFoundException;
 import ru.diploma.project.jd6team5.model.Ads;
 import ru.diploma.project.jd6team5.model.Comment;
 import ru.diploma.project.jd6team5.service.AdsService;
@@ -22,6 +23,8 @@ import ru.diploma.project.jd6team5.service.CommentService;
 import ru.diploma.project.jd6team5.service.UserService;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping(path = "/ads")
@@ -59,12 +62,7 @@ public class AdsController {
             }, tags = "Объявления"
     )
     @GetMapping
-    public ResponseEntity<ResponseWrapperAds> getAllAds(Authentication authentication) {
-        if(authentication != null) {
-            logger.info(authentication.getName());
-        } else {
-            logger.info("anonymous user");
-        }
+    public ResponseEntity<ResponseWrapperAds> getAllAds() {
         return ResponseEntity.ok(adsService.getAllAds());
     }
 
@@ -156,8 +154,8 @@ public class AdsController {
     )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdsDto> addAds(@Parameter(description = "Первичные данные об Объявлении"
-                                                     , schema = @Schema(implementation = CreateAds.class)
-                                             ) @RequestPart CreateAds properties,
+            , schema = @Schema(implementation = CreateAds.class)
+    ) @RequestPart CreateAds properties,
                                          @Parameter(description = "Путь к файлу"
                                                  , allowEmptyValue = true
                                          ) @RequestPart MultipartFile image,
@@ -207,10 +205,11 @@ public class AdsController {
             tags = "Объявления"
     )
     @PostMapping(path = "/{adsID}/comments")
-    public ResponseEntity<CommentDto> addCommentToAds(@PathVariable Long adsID, @RequestBody CommentDto inpComment){
+    public ResponseEntity<CommentDto> addCommentToAds(@PathVariable Long adsID, @RequestBody CommentDto inpComment) {
         Long inAdsID = adsService.findFullAds(adsID).getPk();
         return ResponseEntity.ok(commentService.addComment(inAdsID, inpComment));
     }
+
     @Operation(
             summary = "Удаление Объявления",
             operationId = "removeAds",
@@ -233,10 +232,10 @@ public class AdsController {
             tags = "Объявления"
     )
     @DeleteMapping(path = "/{adsID}")
-    public ResponseEntity<?> removeAds(@PathVariable Long adsID){
+    public ResponseEntity<?> removeAds(@PathVariable Long adsID) {
         adsService.deleteAds(adsID);
         return ResponseEntity.ok().build();
-        }
+    }
 
     @Operation(
             summary = "updateAds - Изменение данных в Объявлении",
@@ -330,10 +329,11 @@ public class AdsController {
     )
     @DeleteMapping("/{adsID}/comment/{commentID}")
     public ResponseEntity<String> deleteComment(@PathVariable Long adsID,
-                                           @PathVariable Long commentID) {
+                                                @PathVariable Long commentID) {
         commentService.deleteComment(adsID, commentID);
         return ResponseEntity.ok().body("Комментарий удалён");
     }
+
     @Operation(
             summary = "Обновление Комментария у данного Объявления",
             operationId = "updateComments",
@@ -415,4 +415,45 @@ public class AdsController {
         ResponseWrapperAds response = adsService.getAllAdsByUserId(id);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(
+            summary = "get Ads image - вывод картинки объявления",
+            operationId = "getAdsImageUsingGET",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content = @Content(
+                                    mediaType = MediaType.IMAGE_PNG_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = byte[].class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)
+                    )
+            }, tags = "Объявления"
+    )
+    @GetMapping(value = "/{adsId}/getimage", produces = {MediaType.IMAGE_PNG_VALUE})
+    public ResponseEntity<byte[]> getImage(@PathVariable Long adsId) throws IOException {
+        Ads ads = adsService.findById(adsId).orElseThrow(AdsNotFoundException::new);
+        if (ads.getImage() == null) {
+            return ResponseEntity.ok(null);
+        } else {
+            Path imagePath = Path.of(ads.getImage());
+            return ResponseEntity.ok(Files.readAllBytes(imagePath));
+        }
+    }
+
 }

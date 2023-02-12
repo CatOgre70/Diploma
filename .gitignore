@@ -33,5 +33,3 @@ build/
 .vscode/
 /gen/
 /openapi (2).yaml
-/src/main/resources/static/ads_images/
-/src/main/resources/static/users_avatars/

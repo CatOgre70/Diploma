@@ -2,6 +2,7 @@ package ru.diploma.project.jd6team5.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
@@ -14,6 +15,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
@@ -22,13 +24,13 @@ public class WebSecurityConfig {
             "/swagger-ui.html",
             "/v3/api-docs",
             "/webjars/**",
-            "/login", "/register", "/ads"
+            "/users/*/getavatar",
+            "/login", "/register", "/ads", "/users", "/ads/*/getimage"
     };
 
     @Bean
     protected UserDetailsManager userDetailsService(DataSource dataSource) {
-        JdbcUserDetailsManager jdbcUser = new JdbcUserDetailsManager(dataSource);
-        return jdbcUser;
+        return new JdbcUserDetailsManager(dataSource);
     }
 
     @Bean

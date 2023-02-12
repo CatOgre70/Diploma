@@ -5,13 +5,12 @@ import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.dto.UserDto;
 import ru.diploma.project.jd6team5.model.User;
 
-import java.nio.charset.StandardCharsets;
-
 @Component
 public class UserMapper {
 
     public UserDto entityToDto (User user) {
-        byte[] avatar = user.getAvatarPath() == null ? null : user.getAvatarPath();
+        String avatar = "/users/{id}/getavatar";
+        avatar = avatar.replace("{id}", user.getUserID().toString());
         return new UserDto(
                 user.getEmail(),
                 user.getFirstName(),
@@ -19,13 +18,13 @@ public class UserMapper {
                 user.getLastName(),
                 user.getPhone(),
                 user.getRegDate(),
-                "Город",
+                user.getCity(),
                 avatar
         );
     }
 
     public User dtoToUser(UserDto dto) {
-        byte[] avatar = dto.getImage() == null ? null : dto.getImage();
+        String avatar = dto.getImage() == null ? null : dto.getImage();
         return new User(dto.getId(),
                 dto.getEmail(),
                 dto.getFirstName(),
@@ -35,7 +34,8 @@ public class UserMapper {
                 dto.getPhone(),
                 UserRole.USER,
                 avatar,
-                dto.getRegDate()
+                dto.getRegDate(),
+                dto.getCity()
                 );
     }
 }
