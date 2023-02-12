@@ -6,8 +6,6 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +26,12 @@ import ru.diploma.project.jd6team5.service.UserService;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(path = "/ads")
 @CrossOrigin(value = "http://localhost:3000")
 public class AdsController {
-
-    private final Logger logger = LoggerFactory.getLogger(AdsController.class);
     private final AdsService adsService;
     private final CommentService commentService;
     private final UserService userService;
@@ -236,7 +233,7 @@ public class AdsController {
     public ResponseEntity<?> removeAds(@PathVariable Long adsID, Authentication authentication) {
         Ads ads = adsService.findById(adsID).orElseThrow(AdsNotFoundException::new);
         User user = userService.getUserByName(authentication.getName());
-        if(ads.getUserID() != user.getUserID() && user.getRole() != UserRole.ADMIN) {
+        if(!Objects.equals(ads.getUserID(), user.getUserID()) && user.getRole() != UserRole.ADMIN) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         adsService.deleteAds(adsID);
@@ -284,7 +281,7 @@ public class AdsController {
                                             Authentication authentication) {
         Ads ads = adsService.findById(id).orElseThrow(AdsNotFoundException::new);
         User user = userService.getUserByName(authentication.getName());
-        if(ads.getUserID() != user.getUserID() && user.getRole() != UserRole.ADMIN) {
+        if(!Objects.equals(ads.getUserID(), user.getUserID()) && user.getRole() != UserRole.ADMIN) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(adsService.updateAds(id, targetAds));
@@ -345,9 +342,9 @@ public class AdsController {
     @DeleteMapping("/{adsID}/comment/{commentID}")
     public ResponseEntity<String> deleteComment(@PathVariable Long adsID,
                                                 @PathVariable Long commentID, Authentication authentication) {
-        CommentDto commentDto = commentService.findByIdAndAdsId(commentID, adsID);
+        CommentDto commentDto = commentService.findByIdAndAdsId(adsID, commentID);
         User user = userService.getUserByName(authentication.getName());
-        if(commentDto.getAuthor() != user.getUserID() && user.getRole() != UserRole.ADMIN) {
+        if(!Objects.equals(commentDto.getAuthor(), user.getUserID()) && user.getRole() != UserRole.ADMIN) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         commentService.deleteComment(adsID, commentID);
@@ -389,10 +386,17 @@ public class AdsController {
                     )},
             tags = "Объявления"
     )
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{adsID}/comment/{commentID}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable Long adsID,
                                                     @PathVariable Long commentID,
-                                                    @RequestBody CommentDto dto) {
+                                                    @RequestBody CommentDto dto,
+                                                    Authentication authentication) {
+        CommentDto commentDto = commentService.findByIdAndAdsId(adsID, commentID);
+        User user = userService.getUserByName(authentication.getName());
+        if(!Objects.equals(commentDto.getAuthor(), user.getUserID()) && user.getRole() != UserRole.ADMIN) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         return ResponseEntity.ok(commentService.updateComment(adsID, commentID, dto));
     }
 
@@ -425,12 +429,9 @@ public class AdsController {
                     )
             }, tags = "Объявления"
     )
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapperAds> getAdsMe(Authentication authentication) {
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        logger.info(authentication.getName());
         Long id = userService.getUserIdByName(authentication.getName());
         ResponseWrapperAds response = adsService.getAllAdsByUserId(id);
         return ResponseEntity.ok(response);
