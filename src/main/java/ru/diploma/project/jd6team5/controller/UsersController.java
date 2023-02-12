@@ -207,7 +207,6 @@ public class UsersController {
                     )
             }, tags = "Пользователи"
     )
-    // @PreAuthorize("isAuthenticated()")
     @GetMapping(value="/{id}/getavatar", produces = {MediaType.IMAGE_PNG_VALUE})
     public ResponseEntity<byte[]> getUserAvatar(@PathVariable Long id) throws IOException {
         return ResponseEntity.ok(userService.getUserAvatar(id));
