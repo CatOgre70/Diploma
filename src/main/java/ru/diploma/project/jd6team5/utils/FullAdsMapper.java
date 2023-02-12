@@ -19,14 +19,7 @@ public class FullAdsMapper {
         String str = "/ads/{adsId}/getimage";
         str = str.replace("{adsId}", ads.getId().toString());
 
-/*        String str = ads.getImage();
-        if(str != null) {
-            str = str.substring(19);
-            str = str.replace('\\', '/');
-            str = str.replace(" ", "%20");
-        }
 
- */
         return new FullAdsDto(
                 user.getFirstName(),
                 user.getLastName(),
