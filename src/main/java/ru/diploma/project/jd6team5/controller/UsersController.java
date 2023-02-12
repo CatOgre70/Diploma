@@ -188,7 +188,7 @@ public class UsersController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "OK",
-                            content = @Content(mediaType = MediaType.IMAGE_JPEG_VALUE)
+                            content = @Content(mediaType = MediaType.IMAGE_PNG_VALUE)
                     ),
                     @ApiResponse(
                             responseCode = "401",
@@ -207,9 +207,9 @@ public class UsersController {
                     )
             }, tags = "Пользователи"
     )
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping(value="/me/getavatar", produces = {MediaType.IMAGE_JPEG_VALUE})
-    public ResponseEntity<byte[]> getUserAvatar(Authentication authentication) throws IOException {
-        return ResponseEntity.ok(userService.getUserAvatar(authentication));
+    // @PreAuthorize("isAuthenticated()")
+    @GetMapping(value="/{id}/getavatar", produces = {MediaType.IMAGE_PNG_VALUE})
+    public ResponseEntity<byte[]> getUserAvatar(@PathVariable Long id) throws IOException {
+        return ResponseEntity.ok(userService.getUserAvatar(id));
     }
 }

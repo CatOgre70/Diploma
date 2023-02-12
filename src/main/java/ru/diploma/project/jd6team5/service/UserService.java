@@ -136,16 +136,19 @@ public class UserService {
     }
     /**
      * Метод, который получает картинку аватара Пользователя
+     *
      * @param authentication
+     * @param id
      * @return
      */
-    public byte[] getUserAvatar(Authentication authentication) throws IOException {
-        Long id = getUserIdByName(authentication.getName());
+    public byte[] getUserAvatar(Long id) throws IOException {
         User userFound = getUserByID(id);
         if (userFound.getAvatar() != null) {
             Path imagePath = Path.of(userFound.getAvatar());
             return Files.readAllBytes(imagePath);
-        } else { return null; }
+        } else {
+            return null;
+        }
     }
     /**
      * Метод, поиска ИД Пользователя по его Логину
