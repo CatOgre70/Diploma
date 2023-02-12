@@ -31,7 +31,7 @@ public class CommentService {
     public CommentDto addComment(Long adsID, CommentDto dto, String authUserName) {
         Comment newComment = mapper.dtoToEntity(dto);
         newComment.setAdsID(adsID);
-        newComment.setUserID(userService.getUserIdByName(authUserName));
+        newComment.setUserID(userService.getUserIdByName(authUserName)); //Добавлен ИД Пользователя в Коммент
         Comment result = commentRepository.save(newComment);
         return mapper.entityToDto(result);
     }
