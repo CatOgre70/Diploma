@@ -2,7 +2,6 @@ package ru.diploma.project.jd6team5.service;
 
 import org.springframework.stereotype.Service;
 import ru.diploma.project.jd6team5.dto.CommentDto;
-import ru.diploma.project.jd6team5.dto.ResponseWrapperAds;
 import ru.diploma.project.jd6team5.dto.ResponseWrapperComments;
 import ru.diploma.project.jd6team5.exception.CommentNotFoundException;
 import ru.diploma.project.jd6team5.model.Comment;
@@ -20,15 +19,19 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentMapper mapper;
+    private final UserService userService;
 
-    public CommentService(CommentRepository commentRepository, CommentMapper mapper) {
+    public CommentService(CommentRepository commentRepository, CommentMapper mapper,
+                          UserService userService) {
         this.commentRepository = commentRepository;
         this.mapper = mapper;
+        this.userService = userService;
     }
 
-    public CommentDto addComment(Long adsID, CommentDto dto) {
+    public CommentDto addComment(Long adsID, CommentDto dto, String authUserName) {
         Comment newComment = mapper.dtoToEntity(dto);
         newComment.setAdsID(adsID);
+        newComment.setUserID(userService.getUserIdByName(authUserName));
         Comment result = commentRepository.save(newComment);
         return mapper.entityToDto(result);
     }
