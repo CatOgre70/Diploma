@@ -137,7 +137,6 @@ public class UserService {
     /**
      * Метод, который получает картинку аватара Пользователя
      *
-     * @param authentication
      * @param id
      * @return
      */
