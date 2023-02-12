@@ -30,8 +30,7 @@ public class WebSecurityConfig {
 
     @Bean
     protected UserDetailsManager userDetailsService(DataSource dataSource) {
-        JdbcUserDetailsManager jdbcUser = new JdbcUserDetailsManager(dataSource);
-        return jdbcUser;
+        return new JdbcUserDetailsManager(dataSource);
     }
 
     @Bean
