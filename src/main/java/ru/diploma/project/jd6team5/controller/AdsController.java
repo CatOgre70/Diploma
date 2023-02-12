@@ -11,13 +11,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.dto.*;
 import ru.diploma.project.jd6team5.exception.AdsNotFoundException;
 import ru.diploma.project.jd6team5.model.Ads;
 import ru.diploma.project.jd6team5.model.Comment;
+import ru.diploma.project.jd6team5.model.User;
 import ru.diploma.project.jd6team5.service.AdsService;
 import ru.diploma.project.jd6team5.service.CommentService;
 import ru.diploma.project.jd6team5.service.UserService;
@@ -152,20 +155,16 @@ public class AdsController {
                     )},
             tags = "Объявления"
     )
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdsDto> addAds(@Parameter(description = "Первичные данные об Объявлении"
-            , schema = @Schema(implementation = CreateAds.class)
-    ) @RequestPart CreateAds properties,
-                                         @Parameter(description = "Путь к файлу"
-                                                 , allowEmptyValue = true
-                                         ) @RequestPart MultipartFile image,
-                                         Authentication authentication
-    ) throws IOException {
+            , schema = @Schema(implementation = CreateAds.class)) @RequestPart CreateAds properties,
+            @Parameter(description = "Путь к файлу", allowEmptyValue = true) @RequestPart MultipartFile image,
+            Authentication authentication) throws IOException {
         if (image != null && image.getSize() > 1024 * 1024 * 10) {
             return ResponseEntity.badRequest().build();
         }
         Long id = userService.getUserIdByName(authentication.getName());
-
         return ResponseEntity.ok(adsService.createAds(id, properties, image));
     }
 
@@ -204,6 +203,7 @@ public class AdsController {
                     )},
             tags = "Объявления"
     )
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "/{adsID}/comments")
     public ResponseEntity<CommentDto> addCommentToAds(@PathVariable Long adsID, @RequestBody CommentDto inpComment) {
         Long inAdsID = adsService.findFullAds(adsID).getPk();
@@ -231,8 +231,14 @@ public class AdsController {
                     )},
             tags = "Объявления"
     )
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping(path = "/{adsID}")
-    public ResponseEntity<?> removeAds(@PathVariable Long adsID) {
+    public ResponseEntity<?> removeAds(@PathVariable Long adsID, Authentication authentication) {
+        Ads ads = adsService.findById(adsID).orElseThrow(AdsNotFoundException::new);
+        User user = userService.getUserByName(authentication.getName());
+        if(ads.getUserID() != user.getUserID() && user.getRole() != UserRole.ADMIN) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         adsService.deleteAds(adsID);
         return ResponseEntity.ok().build();
     }
@@ -272,8 +278,15 @@ public class AdsController {
                     )},
             tags = "Объявления"
     )
+    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{id}")
-    public ResponseEntity<AdsDto> updateAds(@PathVariable Long id, @RequestBody CreateAds targetAds) {
+    public ResponseEntity<AdsDto> updateAds(@PathVariable Long id, @RequestBody CreateAds targetAds,
+                                            Authentication authentication) {
+        Ads ads = adsService.findById(id).orElseThrow(AdsNotFoundException::new);
+        User user = userService.getUserByName(authentication.getName());
+        if(ads.getUserID() != user.getUserID() && user.getRole() != UserRole.ADMIN) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         return ResponseEntity.ok(adsService.updateAds(id, targetAds));
     }
 
@@ -296,6 +309,7 @@ public class AdsController {
                     )},
             tags = "Объявления"
     )
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{adsID}/comment/{commentID}")
     public ResponseEntity<CommentDto> getComment(@PathVariable Long adsID, @PathVariable Long commentID) {
         return ResponseEntity.ok(commentService.findByIdAndAdsId(adsID, commentID));
@@ -327,9 +341,15 @@ public class AdsController {
                     )},
             tags = "Объявления"
     )
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{adsID}/comment/{commentID}")
     public ResponseEntity<String> deleteComment(@PathVariable Long adsID,
-                                                @PathVariable Long commentID) {
+                                                @PathVariable Long commentID, Authentication authentication) {
+        CommentDto commentDto = commentService.findByIdAndAdsId(commentID, adsID);
+        User user = userService.getUserByName(authentication.getName());
+        if(commentDto.getAuthor() != user.getUserID() && user.getRole() != UserRole.ADMIN) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         commentService.deleteComment(adsID, commentID);
         return ResponseEntity.ok().body("Комментарий удалён");
     }

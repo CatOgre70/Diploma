@@ -7,18 +7,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.dto.NewPassword;
 import ru.diploma.project.jd6team5.dto.UserDto;
-import ru.diploma.project.jd6team5.model.User;
 import ru.diploma.project.jd6team5.service.UserService;
 
 import java.io.IOException;

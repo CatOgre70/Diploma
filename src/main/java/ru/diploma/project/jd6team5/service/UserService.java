@@ -137,7 +137,6 @@ public class UserService {
     /**
      * Метод, который получает картинку аватара Пользователя
      *
-     * @param authentication
      * @param id
      * @return
      */
@@ -158,5 +157,14 @@ public class UserService {
     public Long getUserIdByName(String name) {
         User user = userRepo.findUserByEmail(name).orElseThrow(UserNotFoundException::new);
         return user.getUserID();
+    }
+
+    /**
+     * Метод, поиска Пользователя по его Логину
+     * @param name
+     * @return ИД Пользователя
+     */
+    public User getUserByName(String name) {
+        return userRepo.findUserByEmail(name).orElseThrow(UserNotFoundException::new);
     }
 }
