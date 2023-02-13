@@ -11,6 +11,7 @@ import ru.diploma.project.jd6team5.dto.RegReqDto;
 import ru.diploma.project.jd6team5.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 public class AuthService {
@@ -66,5 +67,8 @@ public class AuthService {
             userRepo.save(userInst);
         }
         return true;
+    }
+    public Boolean dasActionPermit(Long commentUserId, Long currentUserId, UserRole currentUserRole){
+        return Objects.equals(commentUserId, currentUserId) || currentUserRole == UserRole.ADMIN;
     }
 }

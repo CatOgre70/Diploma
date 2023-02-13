@@ -20,6 +20,7 @@ import ru.diploma.project.jd6team5.model.Ads;
 import ru.diploma.project.jd6team5.model.Comment;
 import ru.diploma.project.jd6team5.model.User;
 import ru.diploma.project.jd6team5.service.AdsService;
+import ru.diploma.project.jd6team5.service.AuthService;
 import ru.diploma.project.jd6team5.service.CommentService;
 import ru.diploma.project.jd6team5.service.UserService;
 
@@ -35,11 +36,13 @@ public class AdsController {
     private final AdsService adsService;
     private final CommentService commentService;
     private final UserService userService;
+    private final AuthService checkAuth;
 
-    public AdsController(AdsService adsService, CommentService commentService, UserService userService) {
+    public AdsController(AdsService adsService, CommentService commentService, UserService userService, AuthService checkAuth) {
         this.adsService = adsService;
         this.commentService = commentService;
         this.userService = userService;
+        this.checkAuth = checkAuth;
     }
 
     @Operation(
@@ -235,11 +238,12 @@ public class AdsController {
     public ResponseEntity<?> removeAds(@PathVariable Long adsID, Authentication authentication) {
         Ads ads = adsService.findById(adsID).orElseThrow(AdsNotFoundException::new);
         User user = userService.getUserByName(authentication.getName());
-        if(!Objects.equals(ads.getUserID(), user.getUserID()) && user.getRole() != UserRole.ADMIN) {
+        if (checkAuth.dasActionPermit(ads.getUserID(), user.getUserID(), user.getRole())) {
+            adsService.deleteAds(adsID);
+            return ResponseEntity.ok().build();
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        adsService.deleteAds(adsID);
-        return ResponseEntity.ok().build();
     }
 
     @Operation(
@@ -283,10 +287,11 @@ public class AdsController {
                                             Authentication authentication) {
         Ads ads = adsService.findById(id).orElseThrow(AdsNotFoundException::new);
         User user = userService.getUserByName(authentication.getName());
-        if(!Objects.equals(ads.getUserID(), user.getUserID()) && user.getRole() != UserRole.ADMIN) {
+        if (checkAuth.dasActionPermit(ads.getUserID(), user.getUserID(), user.getRole())) {
+            return ResponseEntity.ok(adsService.updateAds(id, targetAds));
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok(adsService.updateAds(id, targetAds));
     }
 
     @Operation(
@@ -346,11 +351,12 @@ public class AdsController {
                                                 @PathVariable Long commentID, Authentication authentication) {
         CommentDto commentDto = commentService.findByIdAndAdsId(adsID, commentID);
         User user = userService.getUserByName(authentication.getName());
-        if(!Objects.equals(commentDto.getAuthor(), user.getUserID()) && user.getRole() != UserRole.ADMIN) {
+        if (checkAuth.dasActionPermit(commentDto.getAuthor(), user.getUserID(), user.getRole())) {
+            commentService.deleteComment(adsID, commentID);
+            return ResponseEntity.ok().body("Комментарий удалён");
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        commentService.deleteComment(adsID, commentID);
-        return ResponseEntity.ok().body("Комментарий удалён");
     }
 
     @Operation(
@@ -396,10 +402,11 @@ public class AdsController {
                                                     Authentication authentication) {
         CommentDto commentDto = commentService.findByIdAndAdsId(adsID, commentID);
         User user = userService.getUserByName(authentication.getName());
-        if(!Objects.equals(commentDto.getAuthor(), user.getUserID()) && user.getRole() != UserRole.ADMIN) {
+        if (checkAuth.dasActionPermit(commentDto.getAuthor(), user.getUserID(), user.getRole())) {
+            return ResponseEntity.ok(commentService.updateComment(adsID, commentID, dto));
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok(commentService.updateComment(adsID, commentID, dto));
     }
 
     @Operation(
