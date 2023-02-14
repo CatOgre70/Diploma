@@ -29,8 +29,8 @@ public class UserMapper {
                 dto.getEmail(),
                 dto.getFirstName(),
                 dto.getLastName(),
-                dto.getEmail(), //TODO: что-то ещё
-                null, //TODO: как-то заполнять пароль
+                dto.getEmail(),
+                null,
                 dto.getPhone(),
                 UserRole.USER,
                 avatar,

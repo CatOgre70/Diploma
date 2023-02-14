@@ -4,6 +4,7 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class CreateAds {
     private String description;
     private int price;

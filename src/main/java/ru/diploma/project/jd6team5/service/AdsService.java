@@ -92,24 +92,6 @@ public class AdsService {
         return result;
     }
 
-
-    public ResponseWrapperAds getAllAdsById(Long id) {
-        List<Ads> foundAds = adsRepository.findAllById(id);
-        List<AdsDto> foundAdsDto;
-        if(foundAds.isEmpty()) {
-            foundAdsDto = Collections.emptyList();
-        } else {
-            foundAdsDto = new ArrayList<>(foundAds.size());
-            for (Ads a : foundAds) {
-                foundAdsDto.add(compactMapper.entityToDto(a));
-            }
-        }
-        ResponseWrapperAds response = new ResponseWrapperAds();
-        response.setCount(foundAds.size());
-        response.setResults(foundAdsDto);
-        return response;
-    }
-
     public ResponseWrapperAds getAllAdsByUserId(Long userID) {
         List<Ads> foundAds = adsRepository.findAllByUserID(userID);
         List<AdsDto> foundAdsDto;

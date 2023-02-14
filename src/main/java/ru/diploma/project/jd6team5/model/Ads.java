@@ -20,11 +20,6 @@ public class Ads {
     private String title;
     private String description;
     private Float price;
-    /*@Enumerated(EnumType.STRING)
-    private CurrencyCode currency;
-    @Enumerated(EnumType.STRING)
-    private AdsStatus status;*/
-
     private String image;
 
     public Ads(Long id, Long userID, String title, String description, Float price) {
