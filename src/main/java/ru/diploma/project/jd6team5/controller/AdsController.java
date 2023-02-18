@@ -13,7 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.diploma.project.jd6team5.constants.UserRole;
 import ru.diploma.project.jd6team5.dto.*;
 import ru.diploma.project.jd6team5.exception.AdsNotFoundException;
 import ru.diploma.project.jd6team5.model.Ads;
@@ -27,7 +26,6 @@ import ru.diploma.project.jd6team5.service.UserService;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 @RestController
 @RequestMapping(path = "/ads")
