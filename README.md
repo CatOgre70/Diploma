@@ -8,6 +8,16 @@
 * Стэк технологий реализуется путём **REST** запросов
 * Авторизация пользователей происходит при помощи данных УЗ (логин/пароль)
 * Хранение данных осуществляется в БД **Posgre**
+* 
+* Чтобы запустить приложение необходимо выполнить следующую команду:
+* 
+* java -jar JD6-TEAM-5-0.5.jar
+* 
+* Не забудьте, пожалуйста, определить переменные окружения для доступа к базе данных:
+* 
+* spring.datasource.username={database user name}
+* spring.datasource.password={database user password} 
+* spring.datasource.url=jdbc:postgresql://{database server IP address}/{database name}
 
 ### Команда разработки
 

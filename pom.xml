@@ -11,7 +11,7 @@
     </parent>
     <groupId>ru.diploma.project</groupId>
     <artifactId>JD6-TEAM-5</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.5</version>
     <name>JD6-TEAM-5</name>
     <description>JD6-TEAM-5</description>
     <properties>
